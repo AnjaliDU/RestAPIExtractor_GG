@@ -1,0 +1,1821 @@
+[
+  {
+    "entity": {
+      "entity_id": 301,
+      "source_instance": "SAPP07",
+      "entity_name": "0FI_GL_4",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "BUKRS",
+        "BELNR",
+        "GJAHR",
+        "BUZEI"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_ODP_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_ODP_SRV/EntityOf0FI_GL_4?$format=json&$filter=FISCPER%20gt%20'2025012'",
+        "delta": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_ODP_SRV/EntityOf0FI_GL_4?$format=json&$filter=FISCPER%20gt%20'2025012'&!deltatoken='D20260304110016_000052000'"
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0FI_GL_4",
+        "parquet_filename": "0FI_GL_4{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0FI_GL_4",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "Snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0FI_GL_4",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0FI_GL_4"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0FI_GL_4_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0FI_GL_4_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0FI_GL_4'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0FI_GL_4_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0FI_GL_4 AS\n    SELECT\n        $1:\"BUKRS\"::VARCHAR AS \"BUKRS\",\n    $1:\"FISCPER\"::VARCHAR AS \"FISCPER\",\n    $1:\"BELNR\"::VARCHAR AS \"BELNR\",\n    $1:\"BUZEI\"::VARCHAR AS \"BUZEI\",\n    $1:\"STATUSPS\"::VARCHAR AS \"STATUSPS\",\n    $1:\"KTOPL\"::VARCHAR AS \"KTOPL\",\n    $1:\"HKONT\"::VARCHAR AS \"HKONT\",\n    $1:\"KOART\"::VARCHAR AS \"KOART\",\n    $1:\"UMSKZ\"::VARCHAR AS \"UMSKZ\",\n    $1:\"BLART\"::VARCHAR AS \"BLART\",\n    $1:\"BSCHL\"::VARCHAR AS \"BSCHL\",\n    $1:\"FISCVAR\"::VARCHAR AS \"FISCVAR\",\n    $1:\"BLDAT\"::VARCHAR AS \"BLDAT\",\n    $1:\"BUDAT\"::VARCHAR AS \"BUDAT\",\n    $1:\"CPUDT\"::VARCHAR AS \"CPUDT\",\n    $1:\"VALUT\"::VARCHAR AS \"VALUT\",\n    $1:\"AUGDT\"::VARCHAR AS \"AUGDT\",\n    $1:\"AUGBL\"::VARCHAR AS \"AUGBL\",\n    $1:\"KOKRS\"::VARCHAR AS \"KOKRS\",\n    $1:\"KOSTL\"::VARCHAR AS \"KOSTL\",\n    $1:\"PRCTR\"::VARCHAR AS \"PRCTR\",\n    $1:\"AUFNR\"::VARCHAR AS \"AUFNR\",\n    $1:\"PROJK\"::VARCHAR AS \"PROJK\",\n    $1:\"WERKS\"::VARCHAR AS \"WERKS\",\n    $1:\"GSBER\"::VARCHAR AS \"GSBER\",\n    $1:\"FKBER\"::VARCHAR AS \"FKBER\",\n    $1:\"PPRCT\"::VARCHAR AS \"PPRCT\",\n    $1:\"PARGB\"::VARCHAR AS \"PARGB\",\n    $1:\"VBUND\"::VARCHAR AS \"VBUND\",\n    $1:\"LCURR\"::VARCHAR AS \"LCURR\",\n    $1:\"DMSOL\"::VARCHAR AS \"DMSOL\",\n    $1:\"DMHAB\"::VARCHAR AS \"DMHAB\",\n    $1:\"DMSHB\"::VARCHAR AS \"DMSHB\",\n    $1:\"WAERS\"::VARCHAR AS \"WAERS\",\n    $1:\"WRSOL\"::VARCHAR AS \"WRSOL\",\n    $1:\"WRHAB\"::VARCHAR AS \"WRHAB\",\n    $1:\"WRSHB\"::VARCHAR AS \"WRSHB\",\n    $1:\"CURT2\"::VARCHAR AS \"CURT2\",\n    $1:\"HWAE2\"::VARCHAR AS \"HWAE2\",\n    $1:\"DMSO2\"::VARCHAR AS \"DMSO2\",\n    $1:\"DMHA2\"::VARCHAR AS \"DMHA2\",\n    $1:\"DMSH2\"::VARCHAR AS \"DMSH2\",\n    $1:\"CURT3\"::VARCHAR AS \"CURT3\",\n    $1:\"HWAE3\"::VARCHAR AS \"HWAE3\",\n    $1:\"DMSO3\"::VARCHAR AS \"DMSO3\",\n    $1:\"DMHA3\"::VARCHAR AS \"DMHA3\",\n    $1:\"DMSH3\"::VARCHAR AS \"DMSH3\",\n    $1:\"XBLNR\"::VARCHAR AS \"XBLNR\",\n    $1:\"XREF3\"::VARCHAR AS \"XREF3\",\n    $1:\"AWREF\"::VARCHAR AS \"AWREF\",\n    $1:\"AWGJA\"::VARCHAR AS \"AWGJA\",\n    $1:\"AWBUK\"::VARCHAR AS \"AWBUK\",\n    $1:\"AWKOK\"::VARCHAR AS \"AWKOK\",\n    $1:\"SGTXT\"::VARCHAR AS \"SGTXT\",\n    $1:\"XNEGP\"::VARCHAR AS \"XNEGP\",\n    $1:\"UPDMOD\"::VARCHAR AS \"UPDMOD\",\n    $1:\"PS_POSID\"::VARCHAR AS \"PS_POSID\",\n    $1:\"ZUONR\"::VARCHAR AS \"ZUONR\",\n    $1:\"STBLG\"::VARCHAR AS \"STBLG\",\n    $1:\"STJAH\"::VARCHAR AS \"STJAH\",\n    $1:\"REBZG\"::VARCHAR AS \"REBZG\",\n    $1:\"REBZJ\"::VARCHAR AS \"REBZJ\",\n    $1:\"REBZT\"::VARCHAR AS \"REBZT\",\n    $1:\"BUZID\"::VARCHAR AS \"BUZID\",\n    $1:\"MWART\"::VARCHAR AS \"MWART\",\n    $1:\"TXGRP\"::VARCHAR AS \"TXGRP\",\n    $1:\"ZFBDT\"::VARCHAR AS \"ZFBDT\",\n    $1:\"ZBD1T\"::VARCHAR AS \"ZBD1T\",\n    $1:\"ZBD2T\"::VARCHAR AS \"ZBD2T\",\n    $1:\"ZBD3T\"::VARCHAR AS \"ZBD3T\",\n    $1:\"XREVERSAL\"::VARCHAR AS \"XREVERSAL\",\n    $1:\"AWTYP\"::VARCHAR AS \"AWTYP\",\n    $1:\"AWKEY\"::VARCHAR AS \"AWKEY\",\n    $1:\"BSTAT\"::VARCHAR AS \"BSTAT\",\n    $1:\"DMBTR\"::VARCHAR AS \"DMBTR\",\n    $1:\"DMBE2\"::VARCHAR AS \"DMBE2\",\n    $1:\"DMBE3\"::VARCHAR AS \"DMBE3\",\n    $1:\"GJAHR\"::VARCHAR AS \"GJAHR\",\n    $1:\"MANDT\"::VARCHAR AS \"MANDT\",\n    $1:\"MONAT\"::VARCHAR AS \"MONAT\",\n    $1:\"SHKZG\"::VARCHAR AS \"SHKZG\",\n    $1:\"WRBTR\"::VARCHAR AS \"WRBTR\",\n    $1:\"BKTXT\"::VARCHAR AS \"BKTXT\",\n    $1:\"GLVOR\"::VARCHAR AS \"GLVOR\",\n    $1:\"PERNR\"::VARCHAR AS \"PERNR\",\n    $1:\"FISTL\"::VARCHAR AS \"FISTL\",\n    $1:\"GEBER\"::VARCHAR AS \"GEBER\",\n    $1:\"KTOSL\"::VARCHAR AS \"KTOSL\",\n    $1:\"BUDGET_PD\"::VARCHAR AS \"BUDGET_PD\",\n    $1:\"MWSKZ\"::VARCHAR AS \"MWSKZ\",\n    $1:\"HFMCOA\"::VARCHAR AS \"HFMCOA\",\n    $1:\"HFMACT\"::VARCHAR AS \"HFMACT\",\n    $1:\"BILKT\"::VARCHAR AS \"BILKT\",\n    $1:\"KUNNR\"::VARCHAR AS \"KUNNR\",\n    $1:\"LIFNR\"::VARCHAR AS \"LIFNR\",\n    $1:\"KZUONR\"::VARCHAR AS \"KZUONR\",\n    $1:\"KSGTXT\"::VARCHAR AS \"KSGTXT\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0FI_GL_4_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0FI_GL_4\n    (\n        \"BUKRS\" VARCHAR,\n    \"FISCPER\" VARCHAR,\n    \"BELNR\" VARCHAR,\n    \"BUZEI\" VARCHAR,\n    \"STATUSPS\" VARCHAR,\n    \"KTOPL\" VARCHAR,\n    \"HKONT\" VARCHAR,\n    \"KOART\" VARCHAR,\n    \"UMSKZ\" VARCHAR,\n    \"BLART\" VARCHAR,\n    \"BSCHL\" VARCHAR,\n    \"FISCVAR\" VARCHAR,\n    \"BLDAT\" VARCHAR,\n    \"BUDAT\" VARCHAR,\n    \"CPUDT\" VARCHAR,\n    \"VALUT\" VARCHAR,\n    \"AUGDT\" VARCHAR,\n    \"AUGBL\" VARCHAR,\n    \"KOKRS\" VARCHAR,\n    \"KOSTL\" VARCHAR,\n    \"PRCTR\" VARCHAR,\n    \"AUFNR\" VARCHAR,\n    \"PROJK\" VARCHAR,\n    \"WERKS\" VARCHAR,\n    \"GSBER\" VARCHAR,\n    \"FKBER\" VARCHAR,\n    \"PPRCT\" VARCHAR,\n    \"PARGB\" VARCHAR,\n    \"VBUND\" VARCHAR,\n    \"LCURR\" VARCHAR,\n    \"DMSOL\" VARCHAR,\n    \"DMHAB\" VARCHAR,\n    \"DMSHB\" VARCHAR,\n    \"WAERS\" VARCHAR,\n    \"WRSOL\" VARCHAR,\n    \"WRHAB\" VARCHAR,\n    \"WRSHB\" VARCHAR,\n    \"CURT2\" VARCHAR,\n    \"HWAE2\" VARCHAR,\n    \"DMSO2\" VARCHAR,\n    \"DMHA2\" VARCHAR,\n    \"DMSH2\" VARCHAR,\n    \"CURT3\" VARCHAR,\n    \"HWAE3\" VARCHAR,\n    \"DMSO3\" VARCHAR,\n    \"DMHA3\" VARCHAR,\n    \"DMSH3\" VARCHAR,\n    \"XBLNR\" VARCHAR,\n    \"XREF3\" VARCHAR,\n    \"AWREF\" VARCHAR,\n    \"AWGJA\" VARCHAR,\n    \"AWBUK\" VARCHAR,\n    \"AWKOK\" VARCHAR,\n    \"SGTXT\" VARCHAR,\n    \"XNEGP\" VARCHAR,\n    \"UPDMOD\" VARCHAR,\n    \"PS_POSID\" VARCHAR,\n    \"ZUONR\" VARCHAR,\n    \"STBLG\" VARCHAR,\n    \"STJAH\" VARCHAR,\n    \"REBZG\" VARCHAR,\n    \"REBZJ\" VARCHAR,\n    \"REBZT\" VARCHAR,\n    \"BUZID\" VARCHAR,\n    \"MWART\" VARCHAR,\n    \"TXGRP\" VARCHAR,\n    \"ZFBDT\" VARCHAR,\n    \"ZBD1T\" VARCHAR,\n    \"ZBD2T\" VARCHAR,\n    \"ZBD3T\" VARCHAR,\n    \"XREVERSAL\" VARCHAR,\n    \"AWTYP\" VARCHAR,\n    \"AWKEY\" VARCHAR,\n    \"BSTAT\" VARCHAR,\n    \"DMBTR\" VARCHAR,\n    \"DMBE2\" VARCHAR,\n    \"DMBE3\" VARCHAR,\n    \"GJAHR\" VARCHAR,\n    \"MANDT\" VARCHAR,\n    \"MONAT\" VARCHAR,\n    \"SHKZG\" VARCHAR,\n    \"WRBTR\" VARCHAR,\n    \"BKTXT\" VARCHAR,\n    \"GLVOR\" VARCHAR,\n    \"PERNR\" VARCHAR,\n    \"FISTL\" VARCHAR,\n    \"GEBER\" VARCHAR,\n    \"KTOSL\" VARCHAR,\n    \"BUDGET_PD\" VARCHAR,\n    \"MWSKZ\" VARCHAR,\n    \"HFMCOA\" VARCHAR,\n    \"HFMACT\" VARCHAR,\n    \"BILKT\" VARCHAR,\n    \"KUNNR\" VARCHAR,\n    \"LIFNR\" VARCHAR,\n    \"KZUONR\" VARCHAR,\n    \"KSGTXT\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0FI_GL_4 PRIMARY KEY (\"BUKRS\", \"BELNR\", \"GJAHR\", \"BUZEI\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0FI_GL_4 T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"BUKRS\", \"BELNR\", \"GJAHR\", \"BUZEI\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0FI_GL_4 V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"BUKRS\" = S.\"BUKRS\" AND T.\"BELNR\" = S.\"BELNR\" AND T.\"GJAHR\" = S.\"GJAHR\" AND T.\"BUZEI\" = S.\"BUZEI\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"BUKRS\" = S.\"BUKRS\",\n    T.\"FISCPER\" = S.\"FISCPER\",\n    T.\"BELNR\" = S.\"BELNR\",\n    T.\"BUZEI\" = S.\"BUZEI\",\n    T.\"STATUSPS\" = S.\"STATUSPS\",\n    T.\"KTOPL\" = S.\"KTOPL\",\n    T.\"HKONT\" = S.\"HKONT\",\n    T.\"KOART\" = S.\"KOART\",\n    T.\"UMSKZ\" = S.\"UMSKZ\",\n    T.\"BLART\" = S.\"BLART\",\n    T.\"BSCHL\" = S.\"BSCHL\",\n    T.\"FISCVAR\" = S.\"FISCVAR\",\n    T.\"BLDAT\" = S.\"BLDAT\",\n    T.\"BUDAT\" = S.\"BUDAT\",\n    T.\"CPUDT\" = S.\"CPUDT\",\n    T.\"VALUT\" = S.\"VALUT\",\n    T.\"AUGDT\" = S.\"AUGDT\",\n    T.\"AUGBL\" = S.\"AUGBL\",\n    T.\"KOKRS\" = S.\"KOKRS\",\n    T.\"KOSTL\" = S.\"KOSTL\",\n    T.\"PRCTR\" = S.\"PRCTR\",\n    T.\"AUFNR\" = S.\"AUFNR\",\n    T.\"PROJK\" = S.\"PROJK\",\n    T.\"WERKS\" = S.\"WERKS\",\n    T.\"GSBER\" = S.\"GSBER\",\n    T.\"FKBER\" = S.\"FKBER\",\n    T.\"PPRCT\" = S.\"PPRCT\",\n    T.\"PARGB\" = S.\"PARGB\",\n    T.\"VBUND\" = S.\"VBUND\",\n    T.\"LCURR\" = S.\"LCURR\",\n    T.\"DMSOL\" = S.\"DMSOL\",\n    T.\"DMHAB\" = S.\"DMHAB\",\n    T.\"DMSHB\" = S.\"DMSHB\",\n    T.\"WAERS\" = S.\"WAERS\",\n    T.\"WRSOL\" = S.\"WRSOL\",\n    T.\"WRHAB\" = S.\"WRHAB\",\n    T.\"WRSHB\" = S.\"WRSHB\",\n    T.\"CURT2\" = S.\"CURT2\",\n    T.\"HWAE2\" = S.\"HWAE2\",\n    T.\"DMSO2\" = S.\"DMSO2\",\n    T.\"DMHA2\" = S.\"DMHA2\",\n    T.\"DMSH2\" = S.\"DMSH2\",\n    T.\"CURT3\" = S.\"CURT3\",\n    T.\"HWAE3\" = S.\"HWAE3\",\n    T.\"DMSO3\" = S.\"DMSO3\",\n    T.\"DMHA3\" = S.\"DMHA3\",\n    T.\"DMSH3\" = S.\"DMSH3\",\n    T.\"XBLNR\" = S.\"XBLNR\",\n    T.\"XREF3\" = S.\"XREF3\",\n    T.\"AWREF\" = S.\"AWREF\",\n    T.\"AWGJA\" = S.\"AWGJA\",\n    T.\"AWBUK\" = S.\"AWBUK\",\n    T.\"AWKOK\" = S.\"AWKOK\",\n    T.\"SGTXT\" = S.\"SGTXT\",\n    T.\"XNEGP\" = S.\"XNEGP\",\n    T.\"UPDMOD\" = S.\"UPDMOD\",\n    T.\"PS_POSID\" = S.\"PS_POSID\",\n    T.\"ZUONR\" = S.\"ZUONR\",\n    T.\"STBLG\" = S.\"STBLG\",\n    T.\"STJAH\" = S.\"STJAH\",\n    T.\"REBZG\" = S.\"REBZG\",\n    T.\"REBZJ\" = S.\"REBZJ\",\n    T.\"REBZT\" = S.\"REBZT\",\n    T.\"BUZID\" = S.\"BUZID\",\n    T.\"MWART\" = S.\"MWART\",\n    T.\"TXGRP\" = S.\"TXGRP\",\n    T.\"ZFBDT\" = S.\"ZFBDT\",\n    T.\"ZBD1T\" = S.\"ZBD1T\",\n    T.\"ZBD2T\" = S.\"ZBD2T\",\n    T.\"ZBD3T\" = S.\"ZBD3T\",\n    T.\"XREVERSAL\" = S.\"XREVERSAL\",\n    T.\"AWTYP\" = S.\"AWTYP\",\n    T.\"AWKEY\" = S.\"AWKEY\",\n    T.\"BSTAT\" = S.\"BSTAT\",\n    T.\"DMBTR\" = S.\"DMBTR\",\n    T.\"DMBE2\" = S.\"DMBE2\",\n    T.\"DMBE3\" = S.\"DMBE3\",\n    T.\"GJAHR\" = S.\"GJAHR\",\n    T.\"MANDT\" = S.\"MANDT\",\n    T.\"MONAT\" = S.\"MONAT\",\n    T.\"SHKZG\" = S.\"SHKZG\",\n    T.\"WRBTR\" = S.\"WRBTR\",\n    T.\"BKTXT\" = S.\"BKTXT\",\n    T.\"GLVOR\" = S.\"GLVOR\",\n    T.\"PERNR\" = S.\"PERNR\",\n    T.\"FISTL\" = S.\"FISTL\",\n    T.\"GEBER\" = S.\"GEBER\",\n    T.\"KTOSL\" = S.\"KTOSL\",\n    T.\"BUDGET_PD\" = S.\"BUDGET_PD\",\n    T.\"MWSKZ\" = S.\"MWSKZ\",\n    T.\"HFMCOA\" = S.\"HFMCOA\",\n    T.\"HFMACT\" = S.\"HFMACT\",\n    T.\"BILKT\" = S.\"BILKT\",\n    T.\"KUNNR\" = S.\"KUNNR\",\n    T.\"LIFNR\" = S.\"LIFNR\",\n    T.\"KZUONR\" = S.\"KZUONR\",\n    T.\"KSGTXT\" = S.\"KSGTXT\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"BUKRS\", \"FISCPER\", \"BELNR\", \"BUZEI\", \"STATUSPS\", \"KTOPL\", \"HKONT\", \"KOART\", \"UMSKZ\", \"BLART\", \"BSCHL\", \"FISCVAR\", \"BLDAT\", \"BUDAT\", \"CPUDT\", \"VALUT\", \"AUGDT\", \"AUGBL\", \"KOKRS\", \"KOSTL\", \"PRCTR\", \"AUFNR\", \"PROJK\", \"WERKS\", \"GSBER\", \"FKBER\", \"PPRCT\", \"PARGB\", \"VBUND\", \"LCURR\", \"DMSOL\", \"DMHAB\", \"DMSHB\", \"WAERS\", \"WRSOL\", \"WRHAB\", \"WRSHB\", \"CURT2\", \"HWAE2\", \"DMSO2\", \"DMHA2\", \"DMSH2\", \"CURT3\", \"HWAE3\", \"DMSO3\", \"DMHA3\", \"DMSH3\", \"XBLNR\", \"XREF3\", \"AWREF\", \"AWGJA\", \"AWBUK\", \"AWKOK\", \"SGTXT\", \"XNEGP\", \"UPDMOD\", \"PS_POSID\", \"ZUONR\", \"STBLG\", \"STJAH\", \"REBZG\", \"REBZJ\", \"REBZT\", \"BUZID\", \"MWART\", \"TXGRP\", \"ZFBDT\", \"ZBD1T\", \"ZBD2T\", \"ZBD3T\", \"XREVERSAL\", \"AWTYP\", \"AWKEY\", \"BSTAT\", \"DMBTR\", \"DMBE2\", \"DMBE3\", \"GJAHR\", \"MANDT\", \"MONAT\", \"SHKZG\", \"WRBTR\", \"BKTXT\", \"GLVOR\", \"PERNR\", \"FISTL\", \"GEBER\", \"KTOSL\", \"BUDGET_PD\", \"MWSKZ\", \"HFMCOA\", \"HFMACT\", \"BILKT\", \"KUNNR\", \"LIFNR\", \"KZUONR\", \"KSGTXT\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"BUKRS\", S.\"FISCPER\", S.\"BELNR\", S.\"BUZEI\", S.\"STATUSPS\", S.\"KTOPL\", S.\"HKONT\", S.\"KOART\", S.\"UMSKZ\", S.\"BLART\", S.\"BSCHL\", S.\"FISCVAR\", S.\"BLDAT\", S.\"BUDAT\", S.\"CPUDT\", S.\"VALUT\", S.\"AUGDT\", S.\"AUGBL\", S.\"KOKRS\", S.\"KOSTL\", S.\"PRCTR\", S.\"AUFNR\", S.\"PROJK\", S.\"WERKS\", S.\"GSBER\", S.\"FKBER\", S.\"PPRCT\", S.\"PARGB\", S.\"VBUND\", S.\"LCURR\", S.\"DMSOL\", S.\"DMHAB\", S.\"DMSHB\", S.\"WAERS\", S.\"WRSOL\", S.\"WRHAB\", S.\"WRSHB\", S.\"CURT2\", S.\"HWAE2\", S.\"DMSO2\", S.\"DMHA2\", S.\"DMSH2\", S.\"CURT3\", S.\"HWAE3\", S.\"DMSO3\", S.\"DMHA3\", S.\"DMSH3\", S.\"XBLNR\", S.\"XREF3\", S.\"AWREF\", S.\"AWGJA\", S.\"AWBUK\", S.\"AWKOK\", S.\"SGTXT\", S.\"XNEGP\", S.\"UPDMOD\", S.\"PS_POSID\", S.\"ZUONR\", S.\"STBLG\", S.\"STJAH\", S.\"REBZG\", S.\"REBZJ\", S.\"REBZT\", S.\"BUZID\", S.\"MWART\", S.\"TXGRP\", S.\"ZFBDT\", S.\"ZBD1T\", S.\"ZBD2T\", S.\"ZBD3T\", S.\"XREVERSAL\", S.\"AWTYP\", S.\"AWKEY\", S.\"BSTAT\", S.\"DMBTR\", S.\"DMBE2\", S.\"DMBE3\", S.\"GJAHR\", S.\"MANDT\", S.\"MONAT\", S.\"SHKZG\", S.\"WRBTR\", S.\"BKTXT\", S.\"GLVOR\", S.\"PERNR\", S.\"FISTL\", S.\"GEBER\", S.\"KTOSL\", S.\"BUDGET_PD\", S.\"MWSKZ\", S.\"HFMCOA\", S.\"HFMACT\", S.\"BILKT\", S.\"KUNNR\", S.\"LIFNR\", S.\"KZUONR\", S.\"KSGTXT\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0FI_GL_4/0FI_GL_4{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 203,
+      "source_instance": "SAPP07",
+      "entity_name": "0CO_AREA_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "KOKRS"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0CO_AREA_ATTR_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0CO_AREA_ATTR_SRV/EntityOf0CO_AREA_ATTR?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0CO_AREA_ATTR",
+        "parquet_filename": "0CO_AREA_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0CO_AREA_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0CO_AREA_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0CO_AREA_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0CO_AREA_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0CO_AREA_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0CO_AREA_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0CO_AREA_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0CO_AREA_ATTR AS\n    SELECT\n        $1:\"KOKRS\"::VARCHAR AS \"KOKRS\",\n    $1:\"WAERS\"::VARCHAR AS \"WAERS\",\n    $1:\"KTOPL\"::VARCHAR AS \"KTOPL\",\n    $1:\"LMONA\"::VARCHAR AS \"LMONA\",\n    $1:\"KHINR\"::VARCHAR AS \"KHINR\",\n    $1:\"ERKRS\"::VARCHAR AS \"ERKRS\",\n    $1:\"PHINR\"::VARCHAR AS \"PHINR\",\n    $1:\"BPHINR\"::VARCHAR AS \"BPHINR\",\n    $1:\"PCACURTP\"::VARCHAR AS \"PCACURTP\",\n    $1:\"FIKRS\"::VARCHAR AS \"FIKRS\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0CO_AREA_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0CO_AREA_ATTR\n    (\n        \"KOKRS\" VARCHAR,\n    \"WAERS\" VARCHAR,\n    \"KTOPL\" VARCHAR,\n    \"LMONA\" VARCHAR,\n    \"KHINR\" VARCHAR,\n    \"ERKRS\" VARCHAR,\n    \"PHINR\" VARCHAR,\n    \"BPHINR\" VARCHAR,\n    \"PCACURTP\" VARCHAR,\n    \"FIKRS\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0CO_AREA_ATTR PRIMARY KEY (\"KOKRS\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0CO_AREA_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"KOKRS\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0CO_AREA_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"KOKRS\" = S.\"KOKRS\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"KOKRS\" = S.\"KOKRS\",\n    T.\"WAERS\" = S.\"WAERS\",\n    T.\"KTOPL\" = S.\"KTOPL\",\n    T.\"LMONA\" = S.\"LMONA\",\n    T.\"KHINR\" = S.\"KHINR\",\n    T.\"ERKRS\" = S.\"ERKRS\",\n    T.\"PHINR\" = S.\"PHINR\",\n    T.\"BPHINR\" = S.\"BPHINR\",\n    T.\"PCACURTP\" = S.\"PCACURTP\",\n    T.\"FIKRS\" = S.\"FIKRS\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"KOKRS\", \"WAERS\", \"KTOPL\", \"LMONA\", \"KHINR\", \"ERKRS\", \"PHINR\", \"BPHINR\", \"PCACURTP\", \"FIKRS\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"KOKRS\", S.\"WAERS\", S.\"KTOPL\", S.\"LMONA\", S.\"KHINR\", S.\"ERKRS\", S.\"PHINR\", S.\"BPHINR\", S.\"PCACURTP\", S.\"FIKRS\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0CO_AREA_ATTR/0CO_AREA_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 206,
+      "source_instance": "SAPP07",
+      "entity_name": "0CUSTOMER_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "KUNNR"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0CUSTOMER_ATTR_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0CUSTOMER_ATTR_SRV/EntityOf0CUSTOMER_ATTR?$format=json",
+        "delta": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0CUSTOMER_ATTR_SRV/EntityOf0CUSTOMER_ATTR?$format=json&!deltatoken='D20260304100637_000022000'"
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0CUSTOMER_ATTR",
+        "parquet_filename": "0CUSTOMER_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0CUSTOMER_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0CUSTOMER_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0CUSTOMER_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0CUSTOMER_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0CUSTOMER_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0CUSTOMER_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0CUSTOMER_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0CUSTOMER_ATTR AS\n    SELECT\n        $1:\"KUNNR\"::VARCHAR AS \"KUNNR\",\n    $1:\"ADRNR\"::VARCHAR AS \"ADRNR\",\n    $1:\"ANRED\"::VARCHAR AS \"ANRED\",\n    $1:\"AUFSD\"::VARCHAR AS \"AUFSD\",\n    $1:\"BAHNE\"::VARCHAR AS \"BAHNE\",\n    $1:\"BAHNS\"::VARCHAR AS \"BAHNS\",\n    $1:\"BBBNR\"::VARCHAR AS \"BBBNR\",\n    $1:\"BBSNR\"::VARCHAR AS \"BBSNR\",\n    $1:\"BEGRU\"::VARCHAR AS \"BEGRU\",\n    $1:\"BRSCH\"::VARCHAR AS \"BRSCH\",\n    $1:\"BUBKZ\"::VARCHAR AS \"BUBKZ\",\n    $1:\"DATLT\"::VARCHAR AS \"DATLT\",\n    $1:\"ERDAT\"::VARCHAR AS \"ERDAT\",\n    $1:\"ERNAM\"::VARCHAR AS \"ERNAM\",\n    $1:\"EXABL\"::VARCHAR AS \"EXABL\",\n    $1:\"FAKSD\"::VARCHAR AS \"FAKSD\",\n    $1:\"FISKN\"::VARCHAR AS \"FISKN\",\n    $1:\"KNAZK\"::VARCHAR AS \"KNAZK\",\n    $1:\"KNRZA\"::VARCHAR AS \"KNRZA\",\n    $1:\"KONZS\"::VARCHAR AS \"KONZS\",\n    $1:\"KTOKD\"::VARCHAR AS \"KTOKD\",\n    $1:\"KUKLA\"::VARCHAR AS \"KUKLA\",\n    $1:\"LAND1\"::VARCHAR AS \"LAND1\",\n    $1:\"LIFNR\"::VARCHAR AS \"LIFNR\",\n    $1:\"LIFSD\"::VARCHAR AS \"LIFSD\",\n    $1:\"LOCCO\"::VARCHAR AS \"LOCCO\",\n    $1:\"LOEVM\"::VARCHAR AS \"LOEVM\",\n    $1:\"NAME1\"::VARCHAR AS \"NAME1\",\n    $1:\"NAME2\"::VARCHAR AS \"NAME2\",\n    $1:\"NAME3\"::VARCHAR AS \"NAME3\",\n    $1:\"NAME4\"::VARCHAR AS \"NAME4\",\n    $1:\"NIELS\"::VARCHAR AS \"NIELS\",\n    $1:\"ORT01\"::VARCHAR AS \"ORT01\",\n    $1:\"ORT02\"::VARCHAR AS \"ORT02\",\n    $1:\"PFACH\"::VARCHAR AS \"PFACH\",\n    $1:\"PSTL2\"::VARCHAR AS \"PSTL2\",\n    $1:\"PSTLZ\"::VARCHAR AS \"PSTLZ\",\n    $1:\"REGIO\"::VARCHAR AS \"REGIO\",\n    $1:\"COUNC\"::VARCHAR AS \"COUNC\",\n    $1:\"CITYC\"::VARCHAR AS \"CITYC\",\n    $1:\"RPMKR\"::VARCHAR AS \"RPMKR\",\n    $1:\"SORTL\"::VARCHAR AS \"SORTL\",\n    $1:\"SPERR\"::VARCHAR AS \"SPERR\",\n    $1:\"SPRAS\"::VARCHAR AS \"SPRAS\",\n    $1:\"STCD1\"::VARCHAR AS \"STCD1\",\n    $1:\"STCD2\"::VARCHAR AS \"STCD2\",\n    $1:\"STKZA\"::VARCHAR AS \"STKZA\",\n    $1:\"STKZU\"::VARCHAR AS \"STKZU\",\n    $1:\"STRAS\"::VARCHAR AS \"STRAS\",\n    $1:\"TELBX\"::VARCHAR AS \"TELBX\",\n    $1:\"TELF1\"::VARCHAR AS \"TELF1\",\n    $1:\"TELF2\"::VARCHAR AS \"TELF2\",\n    $1:\"TELFX\"::VARCHAR AS \"TELFX\",\n    $1:\"TELTX\"::VARCHAR AS \"TELTX\",\n    $1:\"TELX1\"::VARCHAR AS \"TELX1\",\n    $1:\"LZONE\"::VARCHAR AS \"LZONE\",\n    $1:\"XCPDK\"::VARCHAR AS \"XCPDK\",\n    $1:\"XZEMP\"::VARCHAR AS \"XZEMP\",\n    $1:\"VBUND\"::VARCHAR AS \"VBUND\",\n    $1:\"STCEG\"::VARCHAR AS \"STCEG\",\n    $1:\"DEAR1\"::VARCHAR AS \"DEAR1\",\n    $1:\"DEAR2\"::VARCHAR AS \"DEAR2\",\n    $1:\"DEAR3\"::VARCHAR AS \"DEAR3\",\n    $1:\"DEAR4\"::VARCHAR AS \"DEAR4\",\n    $1:\"DEAR5\"::VARCHAR AS \"DEAR5\",\n    $1:\"DEAR6\"::VARCHAR AS \"DEAR6\",\n    $1:\"GFORM\"::VARCHAR AS \"GFORM\",\n    $1:\"BRAN1\"::VARCHAR AS \"BRAN1\",\n    $1:\"BRAN2\"::VARCHAR AS \"BRAN2\",\n    $1:\"BRAN3\"::VARCHAR AS \"BRAN3\",\n    $1:\"BRAN4\"::VARCHAR AS \"BRAN4\",\n    $1:\"BRAN5\"::VARCHAR AS \"BRAN5\",\n    $1:\"EKONT\"::VARCHAR AS \"EKONT\",\n    $1:\"UMSAT\"::VARCHAR AS \"UMSAT\",\n    $1:\"UMJAH\"::VARCHAR AS \"UMJAH\",\n    $1:\"UWAER\"::VARCHAR AS \"UWAER\",\n    $1:\"JMZAH\"::VARCHAR AS \"JMZAH\",\n    $1:\"JMJAH\"::VARCHAR AS \"JMJAH\",\n    $1:\"KATR1\"::VARCHAR AS \"KATR1\",\n    $1:\"KATR2\"::VARCHAR AS \"KATR2\",\n    $1:\"KATR3\"::VARCHAR AS \"KATR3\",\n    $1:\"KATR4\"::VARCHAR AS \"KATR4\",\n    $1:\"KATR5\"::VARCHAR AS \"KATR5\",\n    $1:\"KATR6\"::VARCHAR AS \"KATR6\",\n    $1:\"KATR7\"::VARCHAR AS \"KATR7\",\n    $1:\"KATR8\"::VARCHAR AS \"KATR8\",\n    $1:\"KATR9\"::VARCHAR AS \"KATR9\",\n    $1:\"KATR10\"::VARCHAR AS \"KATR10\",\n    $1:\"STKZN\"::VARCHAR AS \"STKZN\",\n    $1:\"UMSA1\"::VARCHAR AS \"UMSA1\",\n    $1:\"TXJCD\"::VARCHAR AS \"TXJCD\",\n    $1:\"MCOD1\"::VARCHAR AS \"MCOD1\",\n    $1:\"MCOD2\"::VARCHAR AS \"MCOD2\",\n    $1:\"MCOD3\"::VARCHAR AS \"MCOD3\",\n    $1:\"PERIV\"::VARCHAR AS \"PERIV\",\n    $1:\"ABRVW\"::VARCHAR AS \"ABRVW\",\n    $1:\"INSPBYDEBI\"::VARCHAR AS \"INSPBYDEBI\",\n    $1:\"INSPATDEBI\"::VARCHAR AS \"INSPATDEBI\",\n    $1:\"KTOCD\"::VARCHAR AS \"KTOCD\",\n    $1:\"PFORT\"::VARCHAR AS \"PFORT\",\n    $1:\"WERKS\"::VARCHAR AS \"WERKS\",\n    $1:\"DTAMS\"::VARCHAR AS \"DTAMS\",\n    $1:\"DTAWS\"::VARCHAR AS \"DTAWS\",\n    $1:\"DUEFL\"::VARCHAR AS \"DUEFL\",\n    $1:\"HZUOR\"::VARCHAR AS \"HZUOR\",\n    $1:\"SPERZ\"::VARCHAR AS \"SPERZ\",\n    $1:\"ETIKG\"::VARCHAR AS \"ETIKG\",\n    $1:\"CIVVE\"::VARCHAR AS \"CIVVE\",\n    $1:\"MILVE\"::VARCHAR AS \"MILVE\",\n    $1:\"KDKG1\"::VARCHAR AS \"KDKG1\",\n    $1:\"KDKG2\"::VARCHAR AS \"KDKG2\",\n    $1:\"KDKG3\"::VARCHAR AS \"KDKG3\",\n    $1:\"KDKG4\"::VARCHAR AS \"KDKG4\",\n    $1:\"KDKG5\"::VARCHAR AS \"KDKG5\",\n    $1:\"XKNZA\"::VARCHAR AS \"XKNZA\",\n    $1:\"FITYP\"::VARCHAR AS \"FITYP\",\n    $1:\"STCDT\"::VARCHAR AS \"STCDT\",\n    $1:\"STCD3\"::VARCHAR AS \"STCD3\",\n    $1:\"STCD4\"::VARCHAR AS \"STCD4\",\n    $1:\"XICMS\"::VARCHAR AS \"XICMS\",\n    $1:\"XXIPI\"::VARCHAR AS \"XXIPI\",\n    $1:\"XSUBT\"::VARCHAR AS \"XSUBT\",\n    $1:\"CFOPC\"::VARCHAR AS \"CFOPC\",\n    $1:\"TXLW1\"::VARCHAR AS \"TXLW1\",\n    $1:\"TXLW2\"::VARCHAR AS \"TXLW2\",\n    $1:\"CCC01\"::VARCHAR AS \"CCC01\",\n    $1:\"CCC02\"::VARCHAR AS \"CCC02\",\n    $1:\"CCC03\"::VARCHAR AS \"CCC03\",\n    $1:\"CCC04\"::VARCHAR AS \"CCC04\",\n    $1:\"CASSD\"::VARCHAR AS \"CASSD\",\n    $1:\"KNURL\"::VARCHAR AS \"KNURL\",\n    $1:\"ZBNKRPTCYD\"::VARCHAR AS \"ZBNKRPTCYD\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0CUSTOMER_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0CUSTOMER_ATTR\n    (\n        \"KUNNR\" VARCHAR,\n    \"ADRNR\" VARCHAR,\n    \"ANRED\" VARCHAR,\n    \"AUFSD\" VARCHAR,\n    \"BAHNE\" VARCHAR,\n    \"BAHNS\" VARCHAR,\n    \"BBBNR\" VARCHAR,\n    \"BBSNR\" VARCHAR,\n    \"BEGRU\" VARCHAR,\n    \"BRSCH\" VARCHAR,\n    \"BUBKZ\" VARCHAR,\n    \"DATLT\" VARCHAR,\n    \"ERDAT\" VARCHAR,\n    \"ERNAM\" VARCHAR,\n    \"EXABL\" VARCHAR,\n    \"FAKSD\" VARCHAR,\n    \"FISKN\" VARCHAR,\n    \"KNAZK\" VARCHAR,\n    \"KNRZA\" VARCHAR,\n    \"KONZS\" VARCHAR,\n    \"KTOKD\" VARCHAR,\n    \"KUKLA\" VARCHAR,\n    \"LAND1\" VARCHAR,\n    \"LIFNR\" VARCHAR,\n    \"LIFSD\" VARCHAR,\n    \"LOCCO\" VARCHAR,\n    \"LOEVM\" VARCHAR,\n    \"NAME1\" VARCHAR,\n    \"NAME2\" VARCHAR,\n    \"NAME3\" VARCHAR,\n    \"NAME4\" VARCHAR,\n    \"NIELS\" VARCHAR,\n    \"ORT01\" VARCHAR,\n    \"ORT02\" VARCHAR,\n    \"PFACH\" VARCHAR,\n    \"PSTL2\" VARCHAR,\n    \"PSTLZ\" VARCHAR,\n    \"REGIO\" VARCHAR,\n    \"COUNC\" VARCHAR,\n    \"CITYC\" VARCHAR,\n    \"RPMKR\" VARCHAR,\n    \"SORTL\" VARCHAR,\n    \"SPERR\" VARCHAR,\n    \"SPRAS\" VARCHAR,\n    \"STCD1\" VARCHAR,\n    \"STCD2\" VARCHAR,\n    \"STKZA\" VARCHAR,\n    \"STKZU\" VARCHAR,\n    \"STRAS\" VARCHAR,\n    \"TELBX\" VARCHAR,\n    \"TELF1\" VARCHAR,\n    \"TELF2\" VARCHAR,\n    \"TELFX\" VARCHAR,\n    \"TELTX\" VARCHAR,\n    \"TELX1\" VARCHAR,\n    \"LZONE\" VARCHAR,\n    \"XCPDK\" VARCHAR,\n    \"XZEMP\" VARCHAR,\n    \"VBUND\" VARCHAR,\n    \"STCEG\" VARCHAR,\n    \"DEAR1\" VARCHAR,\n    \"DEAR2\" VARCHAR,\n    \"DEAR3\" VARCHAR,\n    \"DEAR4\" VARCHAR,\n    \"DEAR5\" VARCHAR,\n    \"DEAR6\" VARCHAR,\n    \"GFORM\" VARCHAR,\n    \"BRAN1\" VARCHAR,\n    \"BRAN2\" VARCHAR,\n    \"BRAN3\" VARCHAR,\n    \"BRAN4\" VARCHAR,\n    \"BRAN5\" VARCHAR,\n    \"EKONT\" VARCHAR,\n    \"UMSAT\" VARCHAR,\n    \"UMJAH\" VARCHAR,\n    \"UWAER\" VARCHAR,\n    \"JMZAH\" VARCHAR,\n    \"JMJAH\" VARCHAR,\n    \"KATR1\" VARCHAR,\n    \"KATR2\" VARCHAR,\n    \"KATR3\" VARCHAR,\n    \"KATR4\" VARCHAR,\n    \"KATR5\" VARCHAR,\n    \"KATR6\" VARCHAR,\n    \"KATR7\" VARCHAR,\n    \"KATR8\" VARCHAR,\n    \"KATR9\" VARCHAR,\n    \"KATR10\" VARCHAR,\n    \"STKZN\" VARCHAR,\n    \"UMSA1\" VARCHAR,\n    \"TXJCD\" VARCHAR,\n    \"MCOD1\" VARCHAR,\n    \"MCOD2\" VARCHAR,\n    \"MCOD3\" VARCHAR,\n    \"PERIV\" VARCHAR,\n    \"ABRVW\" VARCHAR,\n    \"INSPBYDEBI\" VARCHAR,\n    \"INSPATDEBI\" VARCHAR,\n    \"KTOCD\" VARCHAR,\n    \"PFORT\" VARCHAR,\n    \"WERKS\" VARCHAR,\n    \"DTAMS\" VARCHAR,\n    \"DTAWS\" VARCHAR,\n    \"DUEFL\" VARCHAR,\n    \"HZUOR\" VARCHAR,\n    \"SPERZ\" VARCHAR,\n    \"ETIKG\" VARCHAR,\n    \"CIVVE\" VARCHAR,\n    \"MILVE\" VARCHAR,\n    \"KDKG1\" VARCHAR,\n    \"KDKG2\" VARCHAR,\n    \"KDKG3\" VARCHAR,\n    \"KDKG4\" VARCHAR,\n    \"KDKG5\" VARCHAR,\n    \"XKNZA\" VARCHAR,\n    \"FITYP\" VARCHAR,\n    \"STCDT\" VARCHAR,\n    \"STCD3\" VARCHAR,\n    \"STCD4\" VARCHAR,\n    \"XICMS\" VARCHAR,\n    \"XXIPI\" VARCHAR,\n    \"XSUBT\" VARCHAR,\n    \"CFOPC\" VARCHAR,\n    \"TXLW1\" VARCHAR,\n    \"TXLW2\" VARCHAR,\n    \"CCC01\" VARCHAR,\n    \"CCC02\" VARCHAR,\n    \"CCC03\" VARCHAR,\n    \"CCC04\" VARCHAR,\n    \"CASSD\" VARCHAR,\n    \"KNURL\" VARCHAR,\n    \"ZBNKRPTCYD\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0CUSTOMER_ATTR PRIMARY KEY (\"KUNNR\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0CUSTOMER_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"KUNNR\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0CUSTOMER_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"KUNNR\" = S.\"KUNNR\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"KUNNR\" = S.\"KUNNR\",\n    T.\"ADRNR\" = S.\"ADRNR\",\n    T.\"ANRED\" = S.\"ANRED\",\n    T.\"AUFSD\" = S.\"AUFSD\",\n    T.\"BAHNE\" = S.\"BAHNE\",\n    T.\"BAHNS\" = S.\"BAHNS\",\n    T.\"BBBNR\" = S.\"BBBNR\",\n    T.\"BBSNR\" = S.\"BBSNR\",\n    T.\"BEGRU\" = S.\"BEGRU\",\n    T.\"BRSCH\" = S.\"BRSCH\",\n    T.\"BUBKZ\" = S.\"BUBKZ\",\n    T.\"DATLT\" = S.\"DATLT\",\n    T.\"ERDAT\" = S.\"ERDAT\",\n    T.\"ERNAM\" = S.\"ERNAM\",\n    T.\"EXABL\" = S.\"EXABL\",\n    T.\"FAKSD\" = S.\"FAKSD\",\n    T.\"FISKN\" = S.\"FISKN\",\n    T.\"KNAZK\" = S.\"KNAZK\",\n    T.\"KNRZA\" = S.\"KNRZA\",\n    T.\"KONZS\" = S.\"KONZS\",\n    T.\"KTOKD\" = S.\"KTOKD\",\n    T.\"KUKLA\" = S.\"KUKLA\",\n    T.\"LAND1\" = S.\"LAND1\",\n    T.\"LIFNR\" = S.\"LIFNR\",\n    T.\"LIFSD\" = S.\"LIFSD\",\n    T.\"LOCCO\" = S.\"LOCCO\",\n    T.\"LOEVM\" = S.\"LOEVM\",\n    T.\"NAME1\" = S.\"NAME1\",\n    T.\"NAME2\" = S.\"NAME2\",\n    T.\"NAME3\" = S.\"NAME3\",\n    T.\"NAME4\" = S.\"NAME4\",\n    T.\"NIELS\" = S.\"NIELS\",\n    T.\"ORT01\" = S.\"ORT01\",\n    T.\"ORT02\" = S.\"ORT02\",\n    T.\"PFACH\" = S.\"PFACH\",\n    T.\"PSTL2\" = S.\"PSTL2\",\n    T.\"PSTLZ\" = S.\"PSTLZ\",\n    T.\"REGIO\" = S.\"REGIO\",\n    T.\"COUNC\" = S.\"COUNC\",\n    T.\"CITYC\" = S.\"CITYC\",\n    T.\"RPMKR\" = S.\"RPMKR\",\n    T.\"SORTL\" = S.\"SORTL\",\n    T.\"SPERR\" = S.\"SPERR\",\n    T.\"SPRAS\" = S.\"SPRAS\",\n    T.\"STCD1\" = S.\"STCD1\",\n    T.\"STCD2\" = S.\"STCD2\",\n    T.\"STKZA\" = S.\"STKZA\",\n    T.\"STKZU\" = S.\"STKZU\",\n    T.\"STRAS\" = S.\"STRAS\",\n    T.\"TELBX\" = S.\"TELBX\",\n    T.\"TELF1\" = S.\"TELF1\",\n    T.\"TELF2\" = S.\"TELF2\",\n    T.\"TELFX\" = S.\"TELFX\",\n    T.\"TELTX\" = S.\"TELTX\",\n    T.\"TELX1\" = S.\"TELX1\",\n    T.\"LZONE\" = S.\"LZONE\",\n    T.\"XCPDK\" = S.\"XCPDK\",\n    T.\"XZEMP\" = S.\"XZEMP\",\n    T.\"VBUND\" = S.\"VBUND\",\n    T.\"STCEG\" = S.\"STCEG\",\n    T.\"DEAR1\" = S.\"DEAR1\",\n    T.\"DEAR2\" = S.\"DEAR2\",\n    T.\"DEAR3\" = S.\"DEAR3\",\n    T.\"DEAR4\" = S.\"DEAR4\",\n    T.\"DEAR5\" = S.\"DEAR5\",\n    T.\"DEAR6\" = S.\"DEAR6\",\n    T.\"GFORM\" = S.\"GFORM\",\n    T.\"BRAN1\" = S.\"BRAN1\",\n    T.\"BRAN2\" = S.\"BRAN2\",\n    T.\"BRAN3\" = S.\"BRAN3\",\n    T.\"BRAN4\" = S.\"BRAN4\",\n    T.\"BRAN5\" = S.\"BRAN5\",\n    T.\"EKONT\" = S.\"EKONT\",\n    T.\"UMSAT\" = S.\"UMSAT\",\n    T.\"UMJAH\" = S.\"UMJAH\",\n    T.\"UWAER\" = S.\"UWAER\",\n    T.\"JMZAH\" = S.\"JMZAH\",\n    T.\"JMJAH\" = S.\"JMJAH\",\n    T.\"KATR1\" = S.\"KATR1\",\n    T.\"KATR2\" = S.\"KATR2\",\n    T.\"KATR3\" = S.\"KATR3\",\n    T.\"KATR4\" = S.\"KATR4\",\n    T.\"KATR5\" = S.\"KATR5\",\n    T.\"KATR6\" = S.\"KATR6\",\n    T.\"KATR7\" = S.\"KATR7\",\n    T.\"KATR8\" = S.\"KATR8\",\n    T.\"KATR9\" = S.\"KATR9\",\n    T.\"KATR10\" = S.\"KATR10\",\n    T.\"STKZN\" = S.\"STKZN\",\n    T.\"UMSA1\" = S.\"UMSA1\",\n    T.\"TXJCD\" = S.\"TXJCD\",\n    T.\"MCOD1\" = S.\"MCOD1\",\n    T.\"MCOD2\" = S.\"MCOD2\",\n    T.\"MCOD3\" = S.\"MCOD3\",\n    T.\"PERIV\" = S.\"PERIV\",\n    T.\"ABRVW\" = S.\"ABRVW\",\n    T.\"INSPBYDEBI\" = S.\"INSPBYDEBI\",\n    T.\"INSPATDEBI\" = S.\"INSPATDEBI\",\n    T.\"KTOCD\" = S.\"KTOCD\",\n    T.\"PFORT\" = S.\"PFORT\",\n    T.\"WERKS\" = S.\"WERKS\",\n    T.\"DTAMS\" = S.\"DTAMS\",\n    T.\"DTAWS\" = S.\"DTAWS\",\n    T.\"DUEFL\" = S.\"DUEFL\",\n    T.\"HZUOR\" = S.\"HZUOR\",\n    T.\"SPERZ\" = S.\"SPERZ\",\n    T.\"ETIKG\" = S.\"ETIKG\",\n    T.\"CIVVE\" = S.\"CIVVE\",\n    T.\"MILVE\" = S.\"MILVE\",\n    T.\"KDKG1\" = S.\"KDKG1\",\n    T.\"KDKG2\" = S.\"KDKG2\",\n    T.\"KDKG3\" = S.\"KDKG3\",\n    T.\"KDKG4\" = S.\"KDKG4\",\n    T.\"KDKG5\" = S.\"KDKG5\",\n    T.\"XKNZA\" = S.\"XKNZA\",\n    T.\"FITYP\" = S.\"FITYP\",\n    T.\"STCDT\" = S.\"STCDT\",\n    T.\"STCD3\" = S.\"STCD3\",\n    T.\"STCD4\" = S.\"STCD4\",\n    T.\"XICMS\" = S.\"XICMS\",\n    T.\"XXIPI\" = S.\"XXIPI\",\n    T.\"XSUBT\" = S.\"XSUBT\",\n    T.\"CFOPC\" = S.\"CFOPC\",\n    T.\"TXLW1\" = S.\"TXLW1\",\n    T.\"TXLW2\" = S.\"TXLW2\",\n    T.\"CCC01\" = S.\"CCC01\",\n    T.\"CCC02\" = S.\"CCC02\",\n    T.\"CCC03\" = S.\"CCC03\",\n    T.\"CCC04\" = S.\"CCC04\",\n    T.\"CASSD\" = S.\"CASSD\",\n    T.\"KNURL\" = S.\"KNURL\",\n    T.\"ZBNKRPTCYD\" = S.\"ZBNKRPTCYD\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"KUNNR\", \"ADRNR\", \"ANRED\", \"AUFSD\", \"BAHNE\", \"BAHNS\", \"BBBNR\", \"BBSNR\", \"BEGRU\", \"BRSCH\", \"BUBKZ\", \"DATLT\", \"ERDAT\", \"ERNAM\", \"EXABL\", \"FAKSD\", \"FISKN\", \"KNAZK\", \"KNRZA\", \"KONZS\", \"KTOKD\", \"KUKLA\", \"LAND1\", \"LIFNR\", \"LIFSD\", \"LOCCO\", \"LOEVM\", \"NAME1\", \"NAME2\", \"NAME3\", \"NAME4\", \"NIELS\", \"ORT01\", \"ORT02\", \"PFACH\", \"PSTL2\", \"PSTLZ\", \"REGIO\", \"COUNC\", \"CITYC\", \"RPMKR\", \"SORTL\", \"SPERR\", \"SPRAS\", \"STCD1\", \"STCD2\", \"STKZA\", \"STKZU\", \"STRAS\", \"TELBX\", \"TELF1\", \"TELF2\", \"TELFX\", \"TELTX\", \"TELX1\", \"LZONE\", \"XCPDK\", \"XZEMP\", \"VBUND\", \"STCEG\", \"DEAR1\", \"DEAR2\", \"DEAR3\", \"DEAR4\", \"DEAR5\", \"DEAR6\", \"GFORM\", \"BRAN1\", \"BRAN2\", \"BRAN3\", \"BRAN4\", \"BRAN5\", \"EKONT\", \"UMSAT\", \"UMJAH\", \"UWAER\", \"JMZAH\", \"JMJAH\", \"KATR1\", \"KATR2\", \"KATR3\", \"KATR4\", \"KATR5\", \"KATR6\", \"KATR7\", \"KATR8\", \"KATR9\", \"KATR10\", \"STKZN\", \"UMSA1\", \"TXJCD\", \"MCOD1\", \"MCOD2\", \"MCOD3\", \"PERIV\", \"ABRVW\", \"INSPBYDEBI\", \"INSPATDEBI\", \"KTOCD\", \"PFORT\", \"WERKS\", \"DTAMS\", \"DTAWS\", \"DUEFL\", \"HZUOR\", \"SPERZ\", \"ETIKG\", \"CIVVE\", \"MILVE\", \"KDKG1\", \"KDKG2\", \"KDKG3\", \"KDKG4\", \"KDKG5\", \"XKNZA\", \"FITYP\", \"STCDT\", \"STCD3\", \"STCD4\", \"XICMS\", \"XXIPI\", \"XSUBT\", \"CFOPC\", \"TXLW1\", \"TXLW2\", \"CCC01\", \"CCC02\", \"CCC03\", \"CCC04\", \"CASSD\", \"KNURL\", \"ZBNKRPTCYD\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"KUNNR\", S.\"ADRNR\", S.\"ANRED\", S.\"AUFSD\", S.\"BAHNE\", S.\"BAHNS\", S.\"BBBNR\", S.\"BBSNR\", S.\"BEGRU\", S.\"BRSCH\", S.\"BUBKZ\", S.\"DATLT\", S.\"ERDAT\", S.\"ERNAM\", S.\"EXABL\", S.\"FAKSD\", S.\"FISKN\", S.\"KNAZK\", S.\"KNRZA\", S.\"KONZS\", S.\"KTOKD\", S.\"KUKLA\", S.\"LAND1\", S.\"LIFNR\", S.\"LIFSD\", S.\"LOCCO\", S.\"LOEVM\", S.\"NAME1\", S.\"NAME2\", S.\"NAME3\", S.\"NAME4\", S.\"NIELS\", S.\"ORT01\", S.\"ORT02\", S.\"PFACH\", S.\"PSTL2\", S.\"PSTLZ\", S.\"REGIO\", S.\"COUNC\", S.\"CITYC\", S.\"RPMKR\", S.\"SORTL\", S.\"SPERR\", S.\"SPRAS\", S.\"STCD1\", S.\"STCD2\", S.\"STKZA\", S.\"STKZU\", S.\"STRAS\", S.\"TELBX\", S.\"TELF1\", S.\"TELF2\", S.\"TELFX\", S.\"TELTX\", S.\"TELX1\", S.\"LZONE\", S.\"XCPDK\", S.\"XZEMP\", S.\"VBUND\", S.\"STCEG\", S.\"DEAR1\", S.\"DEAR2\", S.\"DEAR3\", S.\"DEAR4\", S.\"DEAR5\", S.\"DEAR6\", S.\"GFORM\", S.\"BRAN1\", S.\"BRAN2\", S.\"BRAN3\", S.\"BRAN4\", S.\"BRAN5\", S.\"EKONT\", S.\"UMSAT\", S.\"UMJAH\", S.\"UWAER\", S.\"JMZAH\", S.\"JMJAH\", S.\"KATR1\", S.\"KATR2\", S.\"KATR3\", S.\"KATR4\", S.\"KATR5\", S.\"KATR6\", S.\"KATR7\", S.\"KATR8\", S.\"KATR9\", S.\"KATR10\", S.\"STKZN\", S.\"UMSA1\", S.\"TXJCD\", S.\"MCOD1\", S.\"MCOD2\", S.\"MCOD3\", S.\"PERIV\", S.\"ABRVW\", S.\"INSPBYDEBI\", S.\"INSPATDEBI\", S.\"KTOCD\", S.\"PFORT\", S.\"WERKS\", S.\"DTAMS\", S.\"DTAWS\", S.\"DUEFL\", S.\"HZUOR\", S.\"SPERZ\", S.\"ETIKG\", S.\"CIVVE\", S.\"MILVE\", S.\"KDKG1\", S.\"KDKG2\", S.\"KDKG3\", S.\"KDKG4\", S.\"KDKG5\", S.\"XKNZA\", S.\"FITYP\", S.\"STCDT\", S.\"STCD3\", S.\"STCD4\", S.\"XICMS\", S.\"XXIPI\", S.\"XSUBT\", S.\"CFOPC\", S.\"TXLW1\", S.\"TXLW2\", S.\"CCC01\", S.\"CCC02\", S.\"CCC03\", S.\"CCC04\", S.\"CASSD\", S.\"KNURL\", S.\"ZBNKRPTCYD\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0CUSTOMER_ATTR/0CUSTOMER_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 207,
+      "source_instance": "SAPP07",
+      "entity_name": "0VENDOR_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "LIFNR"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0VENDOR_ATTR_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0VENDOR_ATTR_SRV/EntityOf0VENDOR_ATTR?$format=json",
+        "delta": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0VENDOR_ATTR_SRV/EntityOf0VENDOR_ATTR?$format=json&!deltatoken='D20260304100658_000022000'"
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0VENDOR_ATTR",
+        "parquet_filename": "0VENDOR_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0VENDOR_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0VENDOR_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0VENDOR_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0VENDOR_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0VENDOR_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0VENDOR_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0VENDOR_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0VENDOR_ATTR AS\n    SELECT\n        $1:\"LIFNR\"::VARCHAR AS \"LIFNR\",\n    $1:\"ANRED\"::VARCHAR AS \"ANRED\",\n    $1:\"BAHNS\"::VARCHAR AS \"BAHNS\",\n    $1:\"BBBNR\"::VARCHAR AS \"BBBNR\",\n    $1:\"BBSNR\"::VARCHAR AS \"BBSNR\",\n    $1:\"BEGRU\"::VARCHAR AS \"BEGRU\",\n    $1:\"BRSCH\"::VARCHAR AS \"BRSCH\",\n    $1:\"BUBKZ\"::VARCHAR AS \"BUBKZ\",\n    $1:\"DATLT\"::VARCHAR AS \"DATLT\",\n    $1:\"DTAMS\"::VARCHAR AS \"DTAMS\",\n    $1:\"DTAWS\"::VARCHAR AS \"DTAWS\",\n    $1:\"ERDAT\"::VARCHAR AS \"ERDAT\",\n    $1:\"ERNAM\"::VARCHAR AS \"ERNAM\",\n    $1:\"ESRNR\"::VARCHAR AS \"ESRNR\",\n    $1:\"KONZS\"::VARCHAR AS \"KONZS\",\n    $1:\"KTOKK\"::VARCHAR AS \"KTOKK\",\n    $1:\"KUNNR\"::VARCHAR AS \"KUNNR\",\n    $1:\"LAND1\"::VARCHAR AS \"LAND1\",\n    $1:\"LNRZA\"::VARCHAR AS \"LNRZA\",\n    $1:\"LOEVM\"::VARCHAR AS \"LOEVM\",\n    $1:\"NAME1\"::VARCHAR AS \"NAME1\",\n    $1:\"NAME2\"::VARCHAR AS \"NAME2\",\n    $1:\"NAME3\"::VARCHAR AS \"NAME3\",\n    $1:\"NAME4\"::VARCHAR AS \"NAME4\",\n    $1:\"ORT01\"::VARCHAR AS \"ORT01\",\n    $1:\"ORT02\"::VARCHAR AS \"ORT02\",\n    $1:\"PFACH\"::VARCHAR AS \"PFACH\",\n    $1:\"PSTL2\"::VARCHAR AS \"PSTL2\",\n    $1:\"PSTLZ\"::VARCHAR AS \"PSTLZ\",\n    $1:\"REGIO\"::VARCHAR AS \"REGIO\",\n    $1:\"SORTL\"::VARCHAR AS \"SORTL\",\n    $1:\"SPERR\"::VARCHAR AS \"SPERR\",\n    $1:\"SPERM\"::VARCHAR AS \"SPERM\",\n    $1:\"SPRAS\"::VARCHAR AS \"SPRAS\",\n    $1:\"STCD1\"::VARCHAR AS \"STCD1\",\n    $1:\"STCD2\"::VARCHAR AS \"STCD2\",\n    $1:\"STCD3\"::VARCHAR AS \"STCD3\",\n    $1:\"STKZA\"::VARCHAR AS \"STKZA\",\n    $1:\"STKZU\"::VARCHAR AS \"STKZU\",\n    $1:\"STRAS\"::VARCHAR AS \"STRAS\",\n    $1:\"TELBX\"::VARCHAR AS \"TELBX\",\n    $1:\"TELF1\"::VARCHAR AS \"TELF1\",\n    $1:\"TELF2\"::VARCHAR AS \"TELF2\",\n    $1:\"TELFX\"::VARCHAR AS \"TELFX\",\n    $1:\"TELTX\"::VARCHAR AS \"TELTX\",\n    $1:\"TELX1\"::VARCHAR AS \"TELX1\",\n    $1:\"XCPDK\"::VARCHAR AS \"XCPDK\",\n    $1:\"XZEMP\"::VARCHAR AS \"XZEMP\",\n    $1:\"VBUND\"::VARCHAR AS \"VBUND\",\n    $1:\"FISKN\"::VARCHAR AS \"FISKN\",\n    $1:\"STCEG\"::VARCHAR AS \"STCEG\",\n    $1:\"STKZN\"::VARCHAR AS \"STKZN\",\n    $1:\"SPERQ\"::VARCHAR AS \"SPERQ\",\n    $1:\"MCOD1\"::VARCHAR AS \"MCOD1\",\n    $1:\"MCOD2\"::VARCHAR AS \"MCOD2\",\n    $1:\"MCOD3\"::VARCHAR AS \"MCOD3\",\n    $1:\"GBORT\"::VARCHAR AS \"GBORT\",\n    $1:\"GBDAT\"::VARCHAR AS \"GBDAT\",\n    $1:\"SEXKZ\"::VARCHAR AS \"SEXKZ\",\n    $1:\"KRAUS\"::VARCHAR AS \"KRAUS\",\n    $1:\"REVDB\"::VARCHAR AS \"REVDB\",\n    $1:\"QSSYS\"::VARCHAR AS \"QSSYS\",\n    $1:\"KTOCK\"::VARCHAR AS \"KTOCK\",\n    $1:\"PFORT\"::VARCHAR AS \"PFORT\",\n    $1:\"WERKS\"::VARCHAR AS \"WERKS\",\n    $1:\"LTSNA\"::VARCHAR AS \"LTSNA\",\n    $1:\"WERKR\"::VARCHAR AS \"WERKR\",\n    $1:\"PLKAL\"::VARCHAR AS \"PLKAL\",\n    $1:\"TXJCD\"::VARCHAR AS \"TXJCD\",\n    $1:\"SPERZ\"::VARCHAR AS \"SPERZ\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0VENDOR_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0VENDOR_ATTR\n    (\n        \"LIFNR\" VARCHAR,\n    \"ANRED\" VARCHAR,\n    \"BAHNS\" VARCHAR,\n    \"BBBNR\" VARCHAR,\n    \"BBSNR\" VARCHAR,\n    \"BEGRU\" VARCHAR,\n    \"BRSCH\" VARCHAR,\n    \"BUBKZ\" VARCHAR,\n    \"DATLT\" VARCHAR,\n    \"DTAMS\" VARCHAR,\n    \"DTAWS\" VARCHAR,\n    \"ERDAT\" VARCHAR,\n    \"ERNAM\" VARCHAR,\n    \"ESRNR\" VARCHAR,\n    \"KONZS\" VARCHAR,\n    \"KTOKK\" VARCHAR,\n    \"KUNNR\" VARCHAR,\n    \"LAND1\" VARCHAR,\n    \"LNRZA\" VARCHAR,\n    \"LOEVM\" VARCHAR,\n    \"NAME1\" VARCHAR,\n    \"NAME2\" VARCHAR,\n    \"NAME3\" VARCHAR,\n    \"NAME4\" VARCHAR,\n    \"ORT01\" VARCHAR,\n    \"ORT02\" VARCHAR,\n    \"PFACH\" VARCHAR,\n    \"PSTL2\" VARCHAR,\n    \"PSTLZ\" VARCHAR,\n    \"REGIO\" VARCHAR,\n    \"SORTL\" VARCHAR,\n    \"SPERR\" VARCHAR,\n    \"SPERM\" VARCHAR,\n    \"SPRAS\" VARCHAR,\n    \"STCD1\" VARCHAR,\n    \"STCD2\" VARCHAR,\n    \"STCD3\" VARCHAR,\n    \"STKZA\" VARCHAR,\n    \"STKZU\" VARCHAR,\n    \"STRAS\" VARCHAR,\n    \"TELBX\" VARCHAR,\n    \"TELF1\" VARCHAR,\n    \"TELF2\" VARCHAR,\n    \"TELFX\" VARCHAR,\n    \"TELTX\" VARCHAR,\n    \"TELX1\" VARCHAR,\n    \"XCPDK\" VARCHAR,\n    \"XZEMP\" VARCHAR,\n    \"VBUND\" VARCHAR,\n    \"FISKN\" VARCHAR,\n    \"STCEG\" VARCHAR,\n    \"STKZN\" VARCHAR,\n    \"SPERQ\" VARCHAR,\n    \"MCOD1\" VARCHAR,\n    \"MCOD2\" VARCHAR,\n    \"MCOD3\" VARCHAR,\n    \"GBORT\" VARCHAR,\n    \"GBDAT\" VARCHAR,\n    \"SEXKZ\" VARCHAR,\n    \"KRAUS\" VARCHAR,\n    \"REVDB\" VARCHAR,\n    \"QSSYS\" VARCHAR,\n    \"KTOCK\" VARCHAR,\n    \"PFORT\" VARCHAR,\n    \"WERKS\" VARCHAR,\n    \"LTSNA\" VARCHAR,\n    \"WERKR\" VARCHAR,\n    \"PLKAL\" VARCHAR,\n    \"TXJCD\" VARCHAR,\n    \"SPERZ\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0VENDOR_ATTR PRIMARY KEY (\"LIFNR\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0VENDOR_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"LIFNR\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0VENDOR_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"LIFNR\" = S.\"LIFNR\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"LIFNR\" = S.\"LIFNR\",\n    T.\"ANRED\" = S.\"ANRED\",\n    T.\"BAHNS\" = S.\"BAHNS\",\n    T.\"BBBNR\" = S.\"BBBNR\",\n    T.\"BBSNR\" = S.\"BBSNR\",\n    T.\"BEGRU\" = S.\"BEGRU\",\n    T.\"BRSCH\" = S.\"BRSCH\",\n    T.\"BUBKZ\" = S.\"BUBKZ\",\n    T.\"DATLT\" = S.\"DATLT\",\n    T.\"DTAMS\" = S.\"DTAMS\",\n    T.\"DTAWS\" = S.\"DTAWS\",\n    T.\"ERDAT\" = S.\"ERDAT\",\n    T.\"ERNAM\" = S.\"ERNAM\",\n    T.\"ESRNR\" = S.\"ESRNR\",\n    T.\"KONZS\" = S.\"KONZS\",\n    T.\"KTOKK\" = S.\"KTOKK\",\n    T.\"KUNNR\" = S.\"KUNNR\",\n    T.\"LAND1\" = S.\"LAND1\",\n    T.\"LNRZA\" = S.\"LNRZA\",\n    T.\"LOEVM\" = S.\"LOEVM\",\n    T.\"NAME1\" = S.\"NAME1\",\n    T.\"NAME2\" = S.\"NAME2\",\n    T.\"NAME3\" = S.\"NAME3\",\n    T.\"NAME4\" = S.\"NAME4\",\n    T.\"ORT01\" = S.\"ORT01\",\n    T.\"ORT02\" = S.\"ORT02\",\n    T.\"PFACH\" = S.\"PFACH\",\n    T.\"PSTL2\" = S.\"PSTL2\",\n    T.\"PSTLZ\" = S.\"PSTLZ\",\n    T.\"REGIO\" = S.\"REGIO\",\n    T.\"SORTL\" = S.\"SORTL\",\n    T.\"SPERR\" = S.\"SPERR\",\n    T.\"SPERM\" = S.\"SPERM\",\n    T.\"SPRAS\" = S.\"SPRAS\",\n    T.\"STCD1\" = S.\"STCD1\",\n    T.\"STCD2\" = S.\"STCD2\",\n    T.\"STCD3\" = S.\"STCD3\",\n    T.\"STKZA\" = S.\"STKZA\",\n    T.\"STKZU\" = S.\"STKZU\",\n    T.\"STRAS\" = S.\"STRAS\",\n    T.\"TELBX\" = S.\"TELBX\",\n    T.\"TELF1\" = S.\"TELF1\",\n    T.\"TELF2\" = S.\"TELF2\",\n    T.\"TELFX\" = S.\"TELFX\",\n    T.\"TELTX\" = S.\"TELTX\",\n    T.\"TELX1\" = S.\"TELX1\",\n    T.\"XCPDK\" = S.\"XCPDK\",\n    T.\"XZEMP\" = S.\"XZEMP\",\n    T.\"VBUND\" = S.\"VBUND\",\n    T.\"FISKN\" = S.\"FISKN\",\n    T.\"STCEG\" = S.\"STCEG\",\n    T.\"STKZN\" = S.\"STKZN\",\n    T.\"SPERQ\" = S.\"SPERQ\",\n    T.\"MCOD1\" = S.\"MCOD1\",\n    T.\"MCOD2\" = S.\"MCOD2\",\n    T.\"MCOD3\" = S.\"MCOD3\",\n    T.\"GBORT\" = S.\"GBORT\",\n    T.\"GBDAT\" = S.\"GBDAT\",\n    T.\"SEXKZ\" = S.\"SEXKZ\",\n    T.\"KRAUS\" = S.\"KRAUS\",\n    T.\"REVDB\" = S.\"REVDB\",\n    T.\"QSSYS\" = S.\"QSSYS\",\n    T.\"KTOCK\" = S.\"KTOCK\",\n    T.\"PFORT\" = S.\"PFORT\",\n    T.\"WERKS\" = S.\"WERKS\",\n    T.\"LTSNA\" = S.\"LTSNA\",\n    T.\"WERKR\" = S.\"WERKR\",\n    T.\"PLKAL\" = S.\"PLKAL\",\n    T.\"TXJCD\" = S.\"TXJCD\",\n    T.\"SPERZ\" = S.\"SPERZ\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"LIFNR\", \"ANRED\", \"BAHNS\", \"BBBNR\", \"BBSNR\", \"BEGRU\", \"BRSCH\", \"BUBKZ\", \"DATLT\", \"DTAMS\", \"DTAWS\", \"ERDAT\", \"ERNAM\", \"ESRNR\", \"KONZS\", \"KTOKK\", \"KUNNR\", \"LAND1\", \"LNRZA\", \"LOEVM\", \"NAME1\", \"NAME2\", \"NAME3\", \"NAME4\", \"ORT01\", \"ORT02\", \"PFACH\", \"PSTL2\", \"PSTLZ\", \"REGIO\", \"SORTL\", \"SPERR\", \"SPERM\", \"SPRAS\", \"STCD1\", \"STCD2\", \"STCD3\", \"STKZA\", \"STKZU\", \"STRAS\", \"TELBX\", \"TELF1\", \"TELF2\", \"TELFX\", \"TELTX\", \"TELX1\", \"XCPDK\", \"XZEMP\", \"VBUND\", \"FISKN\", \"STCEG\", \"STKZN\", \"SPERQ\", \"MCOD1\", \"MCOD2\", \"MCOD3\", \"GBORT\", \"GBDAT\", \"SEXKZ\", \"KRAUS\", \"REVDB\", \"QSSYS\", \"KTOCK\", \"PFORT\", \"WERKS\", \"LTSNA\", \"WERKR\", \"PLKAL\", \"TXJCD\", \"SPERZ\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"LIFNR\", S.\"ANRED\", S.\"BAHNS\", S.\"BBBNR\", S.\"BBSNR\", S.\"BEGRU\", S.\"BRSCH\", S.\"BUBKZ\", S.\"DATLT\", S.\"DTAMS\", S.\"DTAWS\", S.\"ERDAT\", S.\"ERNAM\", S.\"ESRNR\", S.\"KONZS\", S.\"KTOKK\", S.\"KUNNR\", S.\"LAND1\", S.\"LNRZA\", S.\"LOEVM\", S.\"NAME1\", S.\"NAME2\", S.\"NAME3\", S.\"NAME4\", S.\"ORT01\", S.\"ORT02\", S.\"PFACH\", S.\"PSTL2\", S.\"PSTLZ\", S.\"REGIO\", S.\"SORTL\", S.\"SPERR\", S.\"SPERM\", S.\"SPRAS\", S.\"STCD1\", S.\"STCD2\", S.\"STCD3\", S.\"STKZA\", S.\"STKZU\", S.\"STRAS\", S.\"TELBX\", S.\"TELF1\", S.\"TELF2\", S.\"TELFX\", S.\"TELTX\", S.\"TELX1\", S.\"XCPDK\", S.\"XZEMP\", S.\"VBUND\", S.\"FISKN\", S.\"STCEG\", S.\"STKZN\", S.\"SPERQ\", S.\"MCOD1\", S.\"MCOD2\", S.\"MCOD3\", S.\"GBORT\", S.\"GBDAT\", S.\"SEXKZ\", S.\"KRAUS\", S.\"REVDB\", S.\"QSSYS\", S.\"KTOCK\", S.\"PFORT\", S.\"WERKS\", S.\"LTSNA\", S.\"WERKR\", S.\"PLKAL\", S.\"TXJCD\", S.\"SPERZ\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0VENDOR_ATTR/0VENDOR_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 208,
+      "source_instance": "SAPP07",
+      "entity_name": "0PLANT_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "WERKS"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0PLANT_ATTR_SRV_01/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0PLANT_ATTR_SRV_01/EntityOf0PLANT_ATTR?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0PLANT_ATTR",
+        "parquet_filename": "0PLANT_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0PLANT_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0PLANT_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0PLANT_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0PLANT_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0PLANT_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0PLANT_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0PLANT_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0PLANT_ATTR AS\n    SELECT\n        $1:\"WERKS\"::VARCHAR AS \"WERKS\",\n    $1:\"NAME1\"::VARCHAR AS \"NAME1\",\n    $1:\"NAME2\"::VARCHAR AS \"NAME2\",\n    $1:\"STRAS\"::VARCHAR AS \"STRAS\",\n    $1:\"PFACH\"::VARCHAR AS \"PFACH\",\n    $1:\"PSTLZ\"::VARCHAR AS \"PSTLZ\",\n    $1:\"ORT01\"::VARCHAR AS \"ORT01\",\n    $1:\"EKORG\"::VARCHAR AS \"EKORG\",\n    $1:\"BWKEY\"::VARCHAR AS \"BWKEY\",\n    $1:\"VKORG\"::VARCHAR AS \"VKORG\",\n    $1:\"CHAZV\"::VARCHAR AS \"CHAZV\",\n    $1:\"FABKL\"::VARCHAR AS \"FABKL\",\n    $1:\"KKOWK\"::VARCHAR AS \"KKOWK\",\n    $1:\"KORDB\"::VARCHAR AS \"KORDB\",\n    $1:\"BEDPL\"::VARCHAR AS \"BEDPL\",\n    $1:\"LAND1\"::VARCHAR AS \"LAND1\",\n    $1:\"REGIO\"::VARCHAR AS \"REGIO\",\n    $1:\"COUNC\"::VARCHAR AS \"COUNC\",\n    $1:\"CITYC\"::VARCHAR AS \"CITYC\",\n    $1:\"IWERK\"::VARCHAR AS \"IWERK\",\n    $1:\"TXJCD\"::VARCHAR AS \"TXJCD\",\n    $1:\"VTWEG\"::VARCHAR AS \"VTWEG\",\n    $1:\"SPART\"::VARCHAR AS \"SPART\",\n    $1:\"KUNNR\"::VARCHAR AS \"KUNNR\",\n    $1:\"SPRAS\"::VARCHAR AS \"SPRAS\",\n    $1:\"WKSOP\"::VARCHAR AS \"WKSOP\",\n    $1:\"AWSLS\"::VARCHAR AS \"AWSLS\",\n    $1:\"VLFKZ\"::VARCHAR AS \"VLFKZ\",\n    $1:\"LIFNR\"::VARCHAR AS \"LIFNR\",\n    $1:\"BZIRK\"::VARCHAR AS \"BZIRK\",\n    $1:\"ZONE1\"::VARCHAR AS \"ZONE1\",\n    $1:\"TAXIW\"::VARCHAR AS \"TAXIW\",\n    $1:\"BZQHL\"::VARCHAR AS \"BZQHL\",\n    $1:\"LET01\"::VARCHAR AS \"LET01\",\n    $1:\"LET02\"::VARCHAR AS \"LET02\",\n    $1:\"LET03\"::VARCHAR AS \"LET03\",\n    $1:\"TXNAM_MA1\"::VARCHAR AS \"TXNAM_MA1\",\n    $1:\"TXNAM_MA2\"::VARCHAR AS \"TXNAM_MA2\",\n    $1:\"TXNAM_MA3\"::VARCHAR AS \"TXNAM_MA3\",\n    $1:\"BETOL\"::VARCHAR AS \"BETOL\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0PLANT_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0PLANT_ATTR\n    (\n        \"WERKS\" VARCHAR,\n    \"NAME1\" VARCHAR,\n    \"NAME2\" VARCHAR,\n    \"STRAS\" VARCHAR,\n    \"PFACH\" VARCHAR,\n    \"PSTLZ\" VARCHAR,\n    \"ORT01\" VARCHAR,\n    \"EKORG\" VARCHAR,\n    \"BWKEY\" VARCHAR,\n    \"VKORG\" VARCHAR,\n    \"CHAZV\" VARCHAR,\n    \"FABKL\" VARCHAR,\n    \"KKOWK\" VARCHAR,\n    \"KORDB\" VARCHAR,\n    \"BEDPL\" VARCHAR,\n    \"LAND1\" VARCHAR,\n    \"REGIO\" VARCHAR,\n    \"COUNC\" VARCHAR,\n    \"CITYC\" VARCHAR,\n    \"IWERK\" VARCHAR,\n    \"TXJCD\" VARCHAR,\n    \"VTWEG\" VARCHAR,\n    \"SPART\" VARCHAR,\n    \"KUNNR\" VARCHAR,\n    \"SPRAS\" VARCHAR,\n    \"WKSOP\" VARCHAR,\n    \"AWSLS\" VARCHAR,\n    \"VLFKZ\" VARCHAR,\n    \"LIFNR\" VARCHAR,\n    \"BZIRK\" VARCHAR,\n    \"ZONE1\" VARCHAR,\n    \"TAXIW\" VARCHAR,\n    \"BZQHL\" VARCHAR,\n    \"LET01\" VARCHAR,\n    \"LET02\" VARCHAR,\n    \"LET03\" VARCHAR,\n    \"TXNAM_MA1\" VARCHAR,\n    \"TXNAM_MA2\" VARCHAR,\n    \"TXNAM_MA3\" VARCHAR,\n    \"BETOL\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0PLANT_ATTR PRIMARY KEY (\"WERKS\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0PLANT_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"WERKS\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0PLANT_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"WERKS\" = S.\"WERKS\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"WERKS\" = S.\"WERKS\",\n    T.\"NAME1\" = S.\"NAME1\",\n    T.\"NAME2\" = S.\"NAME2\",\n    T.\"STRAS\" = S.\"STRAS\",\n    T.\"PFACH\" = S.\"PFACH\",\n    T.\"PSTLZ\" = S.\"PSTLZ\",\n    T.\"ORT01\" = S.\"ORT01\",\n    T.\"EKORG\" = S.\"EKORG\",\n    T.\"BWKEY\" = S.\"BWKEY\",\n    T.\"VKORG\" = S.\"VKORG\",\n    T.\"CHAZV\" = S.\"CHAZV\",\n    T.\"FABKL\" = S.\"FABKL\",\n    T.\"KKOWK\" = S.\"KKOWK\",\n    T.\"KORDB\" = S.\"KORDB\",\n    T.\"BEDPL\" = S.\"BEDPL\",\n    T.\"LAND1\" = S.\"LAND1\",\n    T.\"REGIO\" = S.\"REGIO\",\n    T.\"COUNC\" = S.\"COUNC\",\n    T.\"CITYC\" = S.\"CITYC\",\n    T.\"IWERK\" = S.\"IWERK\",\n    T.\"TXJCD\" = S.\"TXJCD\",\n    T.\"VTWEG\" = S.\"VTWEG\",\n    T.\"SPART\" = S.\"SPART\",\n    T.\"KUNNR\" = S.\"KUNNR\",\n    T.\"SPRAS\" = S.\"SPRAS\",\n    T.\"WKSOP\" = S.\"WKSOP\",\n    T.\"AWSLS\" = S.\"AWSLS\",\n    T.\"VLFKZ\" = S.\"VLFKZ\",\n    T.\"LIFNR\" = S.\"LIFNR\",\n    T.\"BZIRK\" = S.\"BZIRK\",\n    T.\"ZONE1\" = S.\"ZONE1\",\n    T.\"TAXIW\" = S.\"TAXIW\",\n    T.\"BZQHL\" = S.\"BZQHL\",\n    T.\"LET01\" = S.\"LET01\",\n    T.\"LET02\" = S.\"LET02\",\n    T.\"LET03\" = S.\"LET03\",\n    T.\"TXNAM_MA1\" = S.\"TXNAM_MA1\",\n    T.\"TXNAM_MA2\" = S.\"TXNAM_MA2\",\n    T.\"TXNAM_MA3\" = S.\"TXNAM_MA3\",\n    T.\"BETOL\" = S.\"BETOL\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"WERKS\", \"NAME1\", \"NAME2\", \"STRAS\", \"PFACH\", \"PSTLZ\", \"ORT01\", \"EKORG\", \"BWKEY\", \"VKORG\", \"CHAZV\", \"FABKL\", \"KKOWK\", \"KORDB\", \"BEDPL\", \"LAND1\", \"REGIO\", \"COUNC\", \"CITYC\", \"IWERK\", \"TXJCD\", \"VTWEG\", \"SPART\", \"KUNNR\", \"SPRAS\", \"WKSOP\", \"AWSLS\", \"VLFKZ\", \"LIFNR\", \"BZIRK\", \"ZONE1\", \"TAXIW\", \"BZQHL\", \"LET01\", \"LET02\", \"LET03\", \"TXNAM_MA1\", \"TXNAM_MA2\", \"TXNAM_MA3\", \"BETOL\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"WERKS\", S.\"NAME1\", S.\"NAME2\", S.\"STRAS\", S.\"PFACH\", S.\"PSTLZ\", S.\"ORT01\", S.\"EKORG\", S.\"BWKEY\", S.\"VKORG\", S.\"CHAZV\", S.\"FABKL\", S.\"KKOWK\", S.\"KORDB\", S.\"BEDPL\", S.\"LAND1\", S.\"REGIO\", S.\"COUNC\", S.\"CITYC\", S.\"IWERK\", S.\"TXJCD\", S.\"VTWEG\", S.\"SPART\", S.\"KUNNR\", S.\"SPRAS\", S.\"WKSOP\", S.\"AWSLS\", S.\"VLFKZ\", S.\"LIFNR\", S.\"BZIRK\", S.\"ZONE1\", S.\"TAXIW\", S.\"BZQHL\", S.\"LET01\", S.\"LET02\", S.\"LET03\", S.\"TXNAM_MA1\", S.\"TXNAM_MA2\", S.\"TXNAM_MA3\", S.\"BETOL\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0PLANT_ATTR/0PLANT_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 209,
+      "source_instance": "SAPP07",
+      "entity_name": "0STOR_LOC_TEXT",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "WERKS",
+        "LGORT"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0STOR_LOC_TEXT_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0STOR_LOC_TEXT_SRV/EntityOf0STOR_LOC_TEXT?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0STOR_LOC_TEXT",
+        "parquet_filename": "0STOR_LOC_TEXT_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0STOR_LOC_TEXT",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0STOR_LOC_TEXT",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0STOR_LOC_TEXT"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0STOR_LOC_TEXT_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0STOR_LOC_TEXT_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0STOR_LOC_TEXT'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0STOR_LOC_TEXT_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0STOR_LOC_TEXT AS\n    SELECT\n        $1:\"WERKS\"::VARCHAR AS \"WERKS\",\n    $1:\"LGORT\"::VARCHAR AS \"LGORT\",\n    $1:\"TXTMD\"::VARCHAR AS \"TXTMD\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0STOR_LOC_TEXT_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0STOR_LOC_TEXT\n    (\n        \"WERKS\" VARCHAR,\n    \"LGORT\" VARCHAR,\n    \"TXTMD\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0STOR_LOC_TEXT PRIMARY KEY (\"WERKS\", \"LGORT\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0STOR_LOC_TEXT T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"WERKS\", \"LGORT\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0STOR_LOC_TEXT V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"WERKS\" = S.\"WERKS\" AND T.\"LGORT\" = S.\"LGORT\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"WERKS\" = S.\"WERKS\",\n    T.\"LGORT\" = S.\"LGORT\",\n    T.\"TXTMD\" = S.\"TXTMD\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"WERKS\", \"LGORT\", \"TXTMD\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"WERKS\", S.\"LGORT\", S.\"TXTMD\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0STOR_LOC_TEXT/0STOR_LOC_TEXT_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 210,
+      "source_instance": "SAPP07",
+      "entity_name": "0PURCH_ORG_TEXT",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "EKORG"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0PURCH_ORG_TEXT_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0PURCH_ORG_TEXT_SRV/EntityOf0PURCH_ORG_TEXT?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0PURCH_ORG_TEXT",
+        "parquet_filename": "0PURCH_ORG_TEXT_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0PURCH_ORG_TEXT",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0PURCH_ORG_TEXT",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0PURCH_ORG_TEXT"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0PURCH_ORG_TEXT_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0PURCH_ORG_TEXT_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0PURCH_ORG_TEXT'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0PURCH_ORG_TEXT_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0PURCH_ORG_TEXT AS\n    SELECT\n        $1:\"EKORG\"::VARCHAR AS \"EKORG\",\n    $1:\"TXTSH\"::VARCHAR AS \"TXTSH\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0PURCH_ORG_TEXT_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0PURCH_ORG_TEXT\n    (\n        \"EKORG\" VARCHAR,\n    \"TXTSH\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0PURCH_ORG_TEXT PRIMARY KEY (\"EKORG\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0PURCH_ORG_TEXT T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"EKORG\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0PURCH_ORG_TEXT V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"EKORG\" = S.\"EKORG\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"EKORG\" = S.\"EKORG\",\n    T.\"TXTSH\" = S.\"TXTSH\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"EKORG\", \"TXTSH\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"EKORG\", S.\"TXTSH\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0PURCH_ORG_TEXT/0PURCH_ORG_TEXT_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 211,
+      "source_instance": "SAPP07",
+      "entity_name": "0MATERIAL_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "MATNR"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MATERIAL_ATTR_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MATERIAL_ATTR_SRV/EntityOf0MATERIAL_ATTR?$format=json",
+        "delta": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MATERIAL_ATTR_SRV/EntityOf0MATERIAL_ATTR?$format=json&!deltatoken='D20260304100805_000022000'"
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0MATERIAL_ATTR",
+        "parquet_filename": "0MATERIAL_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0MATERIAL_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0MATERIAL_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0MATERIAL_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0MATERIAL_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0MATERIAL_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0MATERIAL_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0MATERIAL_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0MATERIAL_ATTR AS\n    SELECT\n        $1:\"MATNR\"::VARCHAR AS \"MATNR\",\n    $1:\"ERSDA\"::VARCHAR AS \"ERSDA\",\n    $1:\"ERNAM\"::VARCHAR AS \"ERNAM\",\n    $1:\"LAEDA\"::VARCHAR AS \"LAEDA\",\n    $1:\"AENAM\"::VARCHAR AS \"AENAM\",\n    $1:\"VPSTA\"::VARCHAR AS \"VPSTA\",\n    $1:\"PSTAT\"::VARCHAR AS \"PSTAT\",\n    $1:\"LVORM\"::VARCHAR AS \"LVORM\",\n    $1:\"MTART\"::VARCHAR AS \"MTART\",\n    $1:\"MBRSH\"::VARCHAR AS \"MBRSH\",\n    $1:\"MATKL\"::VARCHAR AS \"MATKL\",\n    $1:\"BISMT\"::VARCHAR AS \"BISMT\",\n    $1:\"MEINS\"::VARCHAR AS \"MEINS\",\n    $1:\"BSTME\"::VARCHAR AS \"BSTME\",\n    $1:\"ZEINR\"::VARCHAR AS \"ZEINR\",\n    $1:\"ZEIAR\"::VARCHAR AS \"ZEIAR\",\n    $1:\"ZEIVR\"::VARCHAR AS \"ZEIVR\",\n    $1:\"ZEIFO\"::VARCHAR AS \"ZEIFO\",\n    $1:\"AESZN\"::VARCHAR AS \"AESZN\",\n    $1:\"BLATT\"::VARCHAR AS \"BLATT\",\n    $1:\"BLANZ\"::VARCHAR AS \"BLANZ\",\n    $1:\"FERTH\"::VARCHAR AS \"FERTH\",\n    $1:\"FORMT\"::VARCHAR AS \"FORMT\",\n    $1:\"GROES\"::VARCHAR AS \"GROES\",\n    $1:\"WRKST\"::VARCHAR AS \"WRKST\",\n    $1:\"NORMT\"::VARCHAR AS \"NORMT\",\n    $1:\"LABOR\"::VARCHAR AS \"LABOR\",\n    $1:\"EKWSL\"::VARCHAR AS \"EKWSL\",\n    $1:\"BRGEW\"::VARCHAR AS \"BRGEW\",\n    $1:\"NTGEW\"::VARCHAR AS \"NTGEW\",\n    $1:\"GEWEI\"::VARCHAR AS \"GEWEI\",\n    $1:\"VOLUM\"::VARCHAR AS \"VOLUM\",\n    $1:\"VOLEH\"::VARCHAR AS \"VOLEH\",\n    $1:\"BEHVO\"::VARCHAR AS \"BEHVO\",\n    $1:\"RAUBE\"::VARCHAR AS \"RAUBE\",\n    $1:\"TEMPB\"::VARCHAR AS \"TEMPB\",\n    $1:\"DISST\"::VARCHAR AS \"DISST\",\n    $1:\"TRAGR\"::VARCHAR AS \"TRAGR\",\n    $1:\"STOFF\"::VARCHAR AS \"STOFF\",\n    $1:\"SPART\"::VARCHAR AS \"SPART\",\n    $1:\"KUNNR\"::VARCHAR AS \"KUNNR\",\n    $1:\"EANNR\"::VARCHAR AS \"EANNR\",\n    $1:\"WESCH\"::VARCHAR AS \"WESCH\",\n    $1:\"BWVOR\"::VARCHAR AS \"BWVOR\",\n    $1:\"BWSCL\"::VARCHAR AS \"BWSCL\",\n    $1:\"SAISO\"::VARCHAR AS \"SAISO\",\n    $1:\"ETIAR\"::VARCHAR AS \"ETIAR\",\n    $1:\"ETIFO\"::VARCHAR AS \"ETIFO\",\n    $1:\"ENTAR\"::VARCHAR AS \"ENTAR\",\n    $1:\"EAN11\"::VARCHAR AS \"EAN11\",\n    $1:\"NUMTP\"::VARCHAR AS \"NUMTP\",\n    $1:\"LAENG\"::VARCHAR AS \"LAENG\",\n    $1:\"BREIT\"::VARCHAR AS \"BREIT\",\n    $1:\"HOEHE\"::VARCHAR AS \"HOEHE\",\n    $1:\"MEABM\"::VARCHAR AS \"MEABM\",\n    $1:\"PRDHA\"::VARCHAR AS \"PRDHA\",\n    $1:\"AEKLK\"::VARCHAR AS \"AEKLK\",\n    $1:\"CADKZ\"::VARCHAR AS \"CADKZ\",\n    $1:\"QMPUR\"::VARCHAR AS \"QMPUR\",\n    $1:\"ERGEW\"::VARCHAR AS \"ERGEW\",\n    $1:\"ERGEI\"::VARCHAR AS \"ERGEI\",\n    $1:\"ERVOL\"::VARCHAR AS \"ERVOL\",\n    $1:\"ERVOE\"::VARCHAR AS \"ERVOE\",\n    $1:\"GEWTO\"::VARCHAR AS \"GEWTO\",\n    $1:\"VOLTO\"::VARCHAR AS \"VOLTO\",\n    $1:\"VABME\"::VARCHAR AS \"VABME\",\n    $1:\"KZREV\"::VARCHAR AS \"KZREV\",\n    $1:\"KZKFG\"::VARCHAR AS \"KZKFG\",\n    $1:\"XCHPF\"::VARCHAR AS \"XCHPF\",\n    $1:\"VHART\"::VARCHAR AS \"VHART\",\n    $1:\"FUELG\"::VARCHAR AS \"FUELG\",\n    $1:\"STFAK\"::VARCHAR AS \"STFAK\",\n    $1:\"MAGRV\"::VARCHAR AS \"MAGRV\",\n    $1:\"BEGRU\"::VARCHAR AS \"BEGRU\",\n    $1:\"DATAB\"::VARCHAR AS \"DATAB\",\n    $1:\"LIQDT\"::VARCHAR AS \"LIQDT\",\n    $1:\"SAISJ\"::VARCHAR AS \"SAISJ\",\n    $1:\"PLGTP\"::VARCHAR AS \"PLGTP\",\n    $1:\"MLGUT\"::VARCHAR AS \"MLGUT\",\n    $1:\"EXTWG\"::VARCHAR AS \"EXTWG\",\n    $1:\"SATNR\"::VARCHAR AS \"SATNR\",\n    $1:\"ATTYP\"::VARCHAR AS \"ATTYP\",\n    $1:\"KZKUP\"::VARCHAR AS \"KZKUP\",\n    $1:\"KZNFM\"::VARCHAR AS \"KZNFM\",\n    $1:\"PMATA\"::VARCHAR AS \"PMATA\",\n    $1:\"MSTAE\"::VARCHAR AS \"MSTAE\",\n    $1:\"MSTAV\"::VARCHAR AS \"MSTAV\",\n    $1:\"MSTDE\"::VARCHAR AS \"MSTDE\",\n    $1:\"MSTDV\"::VARCHAR AS \"MSTDV\",\n    $1:\"TAKLV\"::VARCHAR AS \"TAKLV\",\n    $1:\"RBNRM\"::VARCHAR AS \"RBNRM\",\n    $1:\"MHDRZ\"::VARCHAR AS \"MHDRZ\",\n    $1:\"MHDHB\"::VARCHAR AS \"MHDHB\",\n    $1:\"MHDLP\"::VARCHAR AS \"MHDLP\",\n    $1:\"INHME\"::VARCHAR AS \"INHME\",\n    $1:\"INHAL\"::VARCHAR AS \"INHAL\",\n    $1:\"VPREH\"::VARCHAR AS \"VPREH\",\n    $1:\"ETIAG\"::VARCHAR AS \"ETIAG\",\n    $1:\"INHBR\"::VARCHAR AS \"INHBR\",\n    $1:\"CMETH\"::VARCHAR AS \"CMETH\",\n    $1:\"CUOBF\"::VARCHAR AS \"CUOBF\",\n    $1:\"KZUMW\"::VARCHAR AS \"KZUMW\",\n    $1:\"KOSCH\"::VARCHAR AS \"KOSCH\",\n    $1:\"SPROF\"::VARCHAR AS \"SPROF\",\n    $1:\"NRFHG\"::VARCHAR AS \"NRFHG\",\n    $1:\"MFRPN\"::VARCHAR AS \"MFRPN\",\n    $1:\"MFRNR\"::VARCHAR AS \"MFRNR\",\n    $1:\"BMATN\"::VARCHAR AS \"BMATN\",\n    $1:\"MPROF\"::VARCHAR AS \"MPROF\",\n    $1:\"KZWSM\"::VARCHAR AS \"KZWSM\",\n    $1:\"SAITY\"::VARCHAR AS \"SAITY\",\n    $1:\"PROFL\"::VARCHAR AS \"PROFL\",\n    $1:\"IHIVI\"::VARCHAR AS \"IHIVI\",\n    $1:\"ILOOS\"::VARCHAR AS \"ILOOS\",\n    $1:\"SERLV\"::VARCHAR AS \"SERLV\",\n    $1:\"KZGVH\"::VARCHAR AS \"KZGVH\",\n    $1:\"XGCHP\"::VARCHAR AS \"XGCHP\",\n    $1:\"KZEFF\"::VARCHAR AS \"KZEFF\",\n    $1:\"COMPL\"::VARCHAR AS \"COMPL\",\n    $1:\"IPRKZ\"::VARCHAR AS \"IPRKZ\",\n    $1:\"RDMHD\"::VARCHAR AS \"RDMHD\",\n    $1:\"PRZUS\"::VARCHAR AS \"PRZUS\",\n    $1:\"MTPOS_MARA\"::VARCHAR AS \"MTPOS_MARA\",\n    $1:\"BFLME\"::VARCHAR AS \"BFLME\",\n    $1:\"FASHGRD\"::VARCHAR AS \"FASHGRD\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0MATERIAL_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0MATERIAL_ATTR\n    (\n        \"MATNR\" VARCHAR,\n    \"ERSDA\" VARCHAR,\n    \"ERNAM\" VARCHAR,\n    \"LAEDA\" VARCHAR,\n    \"AENAM\" VARCHAR,\n    \"VPSTA\" VARCHAR,\n    \"PSTAT\" VARCHAR,\n    \"LVORM\" VARCHAR,\n    \"MTART\" VARCHAR,\n    \"MBRSH\" VARCHAR,\n    \"MATKL\" VARCHAR,\n    \"BISMT\" VARCHAR,\n    \"MEINS\" VARCHAR,\n    \"BSTME\" VARCHAR,\n    \"ZEINR\" VARCHAR,\n    \"ZEIAR\" VARCHAR,\n    \"ZEIVR\" VARCHAR,\n    \"ZEIFO\" VARCHAR,\n    \"AESZN\" VARCHAR,\n    \"BLATT\" VARCHAR,\n    \"BLANZ\" VARCHAR,\n    \"FERTH\" VARCHAR,\n    \"FORMT\" VARCHAR,\n    \"GROES\" VARCHAR,\n    \"WRKST\" VARCHAR,\n    \"NORMT\" VARCHAR,\n    \"LABOR\" VARCHAR,\n    \"EKWSL\" VARCHAR,\n    \"BRGEW\" VARCHAR,\n    \"NTGEW\" VARCHAR,\n    \"GEWEI\" VARCHAR,\n    \"VOLUM\" VARCHAR,\n    \"VOLEH\" VARCHAR,\n    \"BEHVO\" VARCHAR,\n    \"RAUBE\" VARCHAR,\n    \"TEMPB\" VARCHAR,\n    \"DISST\" VARCHAR,\n    \"TRAGR\" VARCHAR,\n    \"STOFF\" VARCHAR,\n    \"SPART\" VARCHAR,\n    \"KUNNR\" VARCHAR,\n    \"EANNR\" VARCHAR,\n    \"WESCH\" VARCHAR,\n    \"BWVOR\" VARCHAR,\n    \"BWSCL\" VARCHAR,\n    \"SAISO\" VARCHAR,\n    \"ETIAR\" VARCHAR,\n    \"ETIFO\" VARCHAR,\n    \"ENTAR\" VARCHAR,\n    \"EAN11\" VARCHAR,\n    \"NUMTP\" VARCHAR,\n    \"LAENG\" VARCHAR,\n    \"BREIT\" VARCHAR,\n    \"HOEHE\" VARCHAR,\n    \"MEABM\" VARCHAR,\n    \"PRDHA\" VARCHAR,\n    \"AEKLK\" VARCHAR,\n    \"CADKZ\" VARCHAR,\n    \"QMPUR\" VARCHAR,\n    \"ERGEW\" VARCHAR,\n    \"ERGEI\" VARCHAR,\n    \"ERVOL\" VARCHAR,\n    \"ERVOE\" VARCHAR,\n    \"GEWTO\" VARCHAR,\n    \"VOLTO\" VARCHAR,\n    \"VABME\" VARCHAR,\n    \"KZREV\" VARCHAR,\n    \"KZKFG\" VARCHAR,\n    \"XCHPF\" VARCHAR,\n    \"VHART\" VARCHAR,\n    \"FUELG\" VARCHAR,\n    \"STFAK\" VARCHAR,\n    \"MAGRV\" VARCHAR,\n    \"BEGRU\" VARCHAR,\n    \"DATAB\" VARCHAR,\n    \"LIQDT\" VARCHAR,\n    \"SAISJ\" VARCHAR,\n    \"PLGTP\" VARCHAR,\n    \"MLGUT\" VARCHAR,\n    \"EXTWG\" VARCHAR,\n    \"SATNR\" VARCHAR,\n    \"ATTYP\" VARCHAR,\n    \"KZKUP\" VARCHAR,\n    \"KZNFM\" VARCHAR,\n    \"PMATA\" VARCHAR,\n    \"MSTAE\" VARCHAR,\n    \"MSTAV\" VARCHAR,\n    \"MSTDE\" VARCHAR,\n    \"MSTDV\" VARCHAR,\n    \"TAKLV\" VARCHAR,\n    \"RBNRM\" VARCHAR,\n    \"MHDRZ\" VARCHAR,\n    \"MHDHB\" VARCHAR,\n    \"MHDLP\" VARCHAR,\n    \"INHME\" VARCHAR,\n    \"INHAL\" VARCHAR,\n    \"VPREH\" VARCHAR,\n    \"ETIAG\" VARCHAR,\n    \"INHBR\" VARCHAR,\n    \"CMETH\" VARCHAR,\n    \"CUOBF\" VARCHAR,\n    \"KZUMW\" VARCHAR,\n    \"KOSCH\" VARCHAR,\n    \"SPROF\" VARCHAR,\n    \"NRFHG\" VARCHAR,\n    \"MFRPN\" VARCHAR,\n    \"MFRNR\" VARCHAR,\n    \"BMATN\" VARCHAR,\n    \"MPROF\" VARCHAR,\n    \"KZWSM\" VARCHAR,\n    \"SAITY\" VARCHAR,\n    \"PROFL\" VARCHAR,\n    \"IHIVI\" VARCHAR,\n    \"ILOOS\" VARCHAR,\n    \"SERLV\" VARCHAR,\n    \"KZGVH\" VARCHAR,\n    \"XGCHP\" VARCHAR,\n    \"KZEFF\" VARCHAR,\n    \"COMPL\" VARCHAR,\n    \"IPRKZ\" VARCHAR,\n    \"RDMHD\" VARCHAR,\n    \"PRZUS\" VARCHAR,\n    \"MTPOS_MARA\" VARCHAR,\n    \"BFLME\" VARCHAR,\n    \"FASHGRD\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0MATERIAL_ATTR PRIMARY KEY (\"MATNR\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0MATERIAL_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"MATNR\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0MATERIAL_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"MATNR\" = S.\"MATNR\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"MATNR\" = S.\"MATNR\",\n    T.\"ERSDA\" = S.\"ERSDA\",\n    T.\"ERNAM\" = S.\"ERNAM\",\n    T.\"LAEDA\" = S.\"LAEDA\",\n    T.\"AENAM\" = S.\"AENAM\",\n    T.\"VPSTA\" = S.\"VPSTA\",\n    T.\"PSTAT\" = S.\"PSTAT\",\n    T.\"LVORM\" = S.\"LVORM\",\n    T.\"MTART\" = S.\"MTART\",\n    T.\"MBRSH\" = S.\"MBRSH\",\n    T.\"MATKL\" = S.\"MATKL\",\n    T.\"BISMT\" = S.\"BISMT\",\n    T.\"MEINS\" = S.\"MEINS\",\n    T.\"BSTME\" = S.\"BSTME\",\n    T.\"ZEINR\" = S.\"ZEINR\",\n    T.\"ZEIAR\" = S.\"ZEIAR\",\n    T.\"ZEIVR\" = S.\"ZEIVR\",\n    T.\"ZEIFO\" = S.\"ZEIFO\",\n    T.\"AESZN\" = S.\"AESZN\",\n    T.\"BLATT\" = S.\"BLATT\",\n    T.\"BLANZ\" = S.\"BLANZ\",\n    T.\"FERTH\" = S.\"FERTH\",\n    T.\"FORMT\" = S.\"FORMT\",\n    T.\"GROES\" = S.\"GROES\",\n    T.\"WRKST\" = S.\"WRKST\",\n    T.\"NORMT\" = S.\"NORMT\",\n    T.\"LABOR\" = S.\"LABOR\",\n    T.\"EKWSL\" = S.\"EKWSL\",\n    T.\"BRGEW\" = S.\"BRGEW\",\n    T.\"NTGEW\" = S.\"NTGEW\",\n    T.\"GEWEI\" = S.\"GEWEI\",\n    T.\"VOLUM\" = S.\"VOLUM\",\n    T.\"VOLEH\" = S.\"VOLEH\",\n    T.\"BEHVO\" = S.\"BEHVO\",\n    T.\"RAUBE\" = S.\"RAUBE\",\n    T.\"TEMPB\" = S.\"TEMPB\",\n    T.\"DISST\" = S.\"DISST\",\n    T.\"TRAGR\" = S.\"TRAGR\",\n    T.\"STOFF\" = S.\"STOFF\",\n    T.\"SPART\" = S.\"SPART\",\n    T.\"KUNNR\" = S.\"KUNNR\",\n    T.\"EANNR\" = S.\"EANNR\",\n    T.\"WESCH\" = S.\"WESCH\",\n    T.\"BWVOR\" = S.\"BWVOR\",\n    T.\"BWSCL\" = S.\"BWSCL\",\n    T.\"SAISO\" = S.\"SAISO\",\n    T.\"ETIAR\" = S.\"ETIAR\",\n    T.\"ETIFO\" = S.\"ETIFO\",\n    T.\"ENTAR\" = S.\"ENTAR\",\n    T.\"EAN11\" = S.\"EAN11\",\n    T.\"NUMTP\" = S.\"NUMTP\",\n    T.\"LAENG\" = S.\"LAENG\",\n    T.\"BREIT\" = S.\"BREIT\",\n    T.\"HOEHE\" = S.\"HOEHE\",\n    T.\"MEABM\" = S.\"MEABM\",\n    T.\"PRDHA\" = S.\"PRDHA\",\n    T.\"AEKLK\" = S.\"AEKLK\",\n    T.\"CADKZ\" = S.\"CADKZ\",\n    T.\"QMPUR\" = S.\"QMPUR\",\n    T.\"ERGEW\" = S.\"ERGEW\",\n    T.\"ERGEI\" = S.\"ERGEI\",\n    T.\"ERVOL\" = S.\"ERVOL\",\n    T.\"ERVOE\" = S.\"ERVOE\",\n    T.\"GEWTO\" = S.\"GEWTO\",\n    T.\"VOLTO\" = S.\"VOLTO\",\n    T.\"VABME\" = S.\"VABME\",\n    T.\"KZREV\" = S.\"KZREV\",\n    T.\"KZKFG\" = S.\"KZKFG\",\n    T.\"XCHPF\" = S.\"XCHPF\",\n    T.\"VHART\" = S.\"VHART\",\n    T.\"FUELG\" = S.\"FUELG\",\n    T.\"STFAK\" = S.\"STFAK\",\n    T.\"MAGRV\" = S.\"MAGRV\",\n    T.\"BEGRU\" = S.\"BEGRU\",\n    T.\"DATAB\" = S.\"DATAB\",\n    T.\"LIQDT\" = S.\"LIQDT\",\n    T.\"SAISJ\" = S.\"SAISJ\",\n    T.\"PLGTP\" = S.\"PLGTP\",\n    T.\"MLGUT\" = S.\"MLGUT\",\n    T.\"EXTWG\" = S.\"EXTWG\",\n    T.\"SATNR\" = S.\"SATNR\",\n    T.\"ATTYP\" = S.\"ATTYP\",\n    T.\"KZKUP\" = S.\"KZKUP\",\n    T.\"KZNFM\" = S.\"KZNFM\",\n    T.\"PMATA\" = S.\"PMATA\",\n    T.\"MSTAE\" = S.\"MSTAE\",\n    T.\"MSTAV\" = S.\"MSTAV\",\n    T.\"MSTDE\" = S.\"MSTDE\",\n    T.\"MSTDV\" = S.\"MSTDV\",\n    T.\"TAKLV\" = S.\"TAKLV\",\n    T.\"RBNRM\" = S.\"RBNRM\",\n    T.\"MHDRZ\" = S.\"MHDRZ\",\n    T.\"MHDHB\" = S.\"MHDHB\",\n    T.\"MHDLP\" = S.\"MHDLP\",\n    T.\"INHME\" = S.\"INHME\",\n    T.\"INHAL\" = S.\"INHAL\",\n    T.\"VPREH\" = S.\"VPREH\",\n    T.\"ETIAG\" = S.\"ETIAG\",\n    T.\"INHBR\" = S.\"INHBR\",\n    T.\"CMETH\" = S.\"CMETH\",\n    T.\"CUOBF\" = S.\"CUOBF\",\n    T.\"KZUMW\" = S.\"KZUMW\",\n    T.\"KOSCH\" = S.\"KOSCH\",\n    T.\"SPROF\" = S.\"SPROF\",\n    T.\"NRFHG\" = S.\"NRFHG\",\n    T.\"MFRPN\" = S.\"MFRPN\",\n    T.\"MFRNR\" = S.\"MFRNR\",\n    T.\"BMATN\" = S.\"BMATN\",\n    T.\"MPROF\" = S.\"MPROF\",\n    T.\"KZWSM\" = S.\"KZWSM\",\n    T.\"SAITY\" = S.\"SAITY\",\n    T.\"PROFL\" = S.\"PROFL\",\n    T.\"IHIVI\" = S.\"IHIVI\",\n    T.\"ILOOS\" = S.\"ILOOS\",\n    T.\"SERLV\" = S.\"SERLV\",\n    T.\"KZGVH\" = S.\"KZGVH\",\n    T.\"XGCHP\" = S.\"XGCHP\",\n    T.\"KZEFF\" = S.\"KZEFF\",\n    T.\"COMPL\" = S.\"COMPL\",\n    T.\"IPRKZ\" = S.\"IPRKZ\",\n    T.\"RDMHD\" = S.\"RDMHD\",\n    T.\"PRZUS\" = S.\"PRZUS\",\n    T.\"MTPOS_MARA\" = S.\"MTPOS_MARA\",\n    T.\"BFLME\" = S.\"BFLME\",\n    T.\"FASHGRD\" = S.\"FASHGRD\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"MATNR\", \"ERSDA\", \"ERNAM\", \"LAEDA\", \"AENAM\", \"VPSTA\", \"PSTAT\", \"LVORM\", \"MTART\", \"MBRSH\", \"MATKL\", \"BISMT\", \"MEINS\", \"BSTME\", \"ZEINR\", \"ZEIAR\", \"ZEIVR\", \"ZEIFO\", \"AESZN\", \"BLATT\", \"BLANZ\", \"FERTH\", \"FORMT\", \"GROES\", \"WRKST\", \"NORMT\", \"LABOR\", \"EKWSL\", \"BRGEW\", \"NTGEW\", \"GEWEI\", \"VOLUM\", \"VOLEH\", \"BEHVO\", \"RAUBE\", \"TEMPB\", \"DISST\", \"TRAGR\", \"STOFF\", \"SPART\", \"KUNNR\", \"EANNR\", \"WESCH\", \"BWVOR\", \"BWSCL\", \"SAISO\", \"ETIAR\", \"ETIFO\", \"ENTAR\", \"EAN11\", \"NUMTP\", \"LAENG\", \"BREIT\", \"HOEHE\", \"MEABM\", \"PRDHA\", \"AEKLK\", \"CADKZ\", \"QMPUR\", \"ERGEW\", \"ERGEI\", \"ERVOL\", \"ERVOE\", \"GEWTO\", \"VOLTO\", \"VABME\", \"KZREV\", \"KZKFG\", \"XCHPF\", \"VHART\", \"FUELG\", \"STFAK\", \"MAGRV\", \"BEGRU\", \"DATAB\", \"LIQDT\", \"SAISJ\", \"PLGTP\", \"MLGUT\", \"EXTWG\", \"SATNR\", \"ATTYP\", \"KZKUP\", \"KZNFM\", \"PMATA\", \"MSTAE\", \"MSTAV\", \"MSTDE\", \"MSTDV\", \"TAKLV\", \"RBNRM\", \"MHDRZ\", \"MHDHB\", \"MHDLP\", \"INHME\", \"INHAL\", \"VPREH\", \"ETIAG\", \"INHBR\", \"CMETH\", \"CUOBF\", \"KZUMW\", \"KOSCH\", \"SPROF\", \"NRFHG\", \"MFRPN\", \"MFRNR\", \"BMATN\", \"MPROF\", \"KZWSM\", \"SAITY\", \"PROFL\", \"IHIVI\", \"ILOOS\", \"SERLV\", \"KZGVH\", \"XGCHP\", \"KZEFF\", \"COMPL\", \"IPRKZ\", \"RDMHD\", \"PRZUS\", \"MTPOS_MARA\", \"BFLME\", \"FASHGRD\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"MATNR\", S.\"ERSDA\", S.\"ERNAM\", S.\"LAEDA\", S.\"AENAM\", S.\"VPSTA\", S.\"PSTAT\", S.\"LVORM\", S.\"MTART\", S.\"MBRSH\", S.\"MATKL\", S.\"BISMT\", S.\"MEINS\", S.\"BSTME\", S.\"ZEINR\", S.\"ZEIAR\", S.\"ZEIVR\", S.\"ZEIFO\", S.\"AESZN\", S.\"BLATT\", S.\"BLANZ\", S.\"FERTH\", S.\"FORMT\", S.\"GROES\", S.\"WRKST\", S.\"NORMT\", S.\"LABOR\", S.\"EKWSL\", S.\"BRGEW\", S.\"NTGEW\", S.\"GEWEI\", S.\"VOLUM\", S.\"VOLEH\", S.\"BEHVO\", S.\"RAUBE\", S.\"TEMPB\", S.\"DISST\", S.\"TRAGR\", S.\"STOFF\", S.\"SPART\", S.\"KUNNR\", S.\"EANNR\", S.\"WESCH\", S.\"BWVOR\", S.\"BWSCL\", S.\"SAISO\", S.\"ETIAR\", S.\"ETIFO\", S.\"ENTAR\", S.\"EAN11\", S.\"NUMTP\", S.\"LAENG\", S.\"BREIT\", S.\"HOEHE\", S.\"MEABM\", S.\"PRDHA\", S.\"AEKLK\", S.\"CADKZ\", S.\"QMPUR\", S.\"ERGEW\", S.\"ERGEI\", S.\"ERVOL\", S.\"ERVOE\", S.\"GEWTO\", S.\"VOLTO\", S.\"VABME\", S.\"KZREV\", S.\"KZKFG\", S.\"XCHPF\", S.\"VHART\", S.\"FUELG\", S.\"STFAK\", S.\"MAGRV\", S.\"BEGRU\", S.\"DATAB\", S.\"LIQDT\", S.\"SAISJ\", S.\"PLGTP\", S.\"MLGUT\", S.\"EXTWG\", S.\"SATNR\", S.\"ATTYP\", S.\"KZKUP\", S.\"KZNFM\", S.\"PMATA\", S.\"MSTAE\", S.\"MSTAV\", S.\"MSTDE\", S.\"MSTDV\", S.\"TAKLV\", S.\"RBNRM\", S.\"MHDRZ\", S.\"MHDHB\", S.\"MHDLP\", S.\"INHME\", S.\"INHAL\", S.\"VPREH\", S.\"ETIAG\", S.\"INHBR\", S.\"CMETH\", S.\"CUOBF\", S.\"KZUMW\", S.\"KOSCH\", S.\"SPROF\", S.\"NRFHG\", S.\"MFRPN\", S.\"MFRNR\", S.\"BMATN\", S.\"MPROF\", S.\"KZWSM\", S.\"SAITY\", S.\"PROFL\", S.\"IHIVI\", S.\"ILOOS\", S.\"SERLV\", S.\"KZGVH\", S.\"XGCHP\", S.\"KZEFF\", S.\"COMPL\", S.\"IPRKZ\", S.\"RDMHD\", S.\"PRZUS\", S.\"MTPOS_MARA\", S.\"BFLME\", S.\"FASHGRD\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0MATERIAL_ATTR/0MATERIAL_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 212,
+      "source_instance": "SAPP07",
+      "entity_name": "0MAT_PLANT_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "MATNR",
+        "WERKS"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MAT_PLANT_ATTR_SRV_01/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MAT_PLANT_ATTR_SRV_01/EntityOf0MAT_PLANT_ATTR?$format=json",
+        "delta": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MAT_PLANT_ATTR_SRV_01/EntityOf0MAT_PLANT_ATTR?$format=json&!deltatoken='D20260304102008_000022000'"
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0MAT_PLANT_ATTR",
+        "parquet_filename": "0MAT_PLANT_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0MAT_PLANT_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0MAT_PLANT_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0MAT_PLANT_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0MAT_PLANT_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0MAT_PLANT_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0MAT_PLANT_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0MAT_PLANT_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0MAT_PLANT_ATTR AS\n    SELECT\n        $1:\"MATNR\"::VARCHAR AS \"MATNR\",\n    $1:\"WERKS\"::VARCHAR AS \"WERKS\",\n    $1:\"PSTAT\"::VARCHAR AS \"PSTAT\",\n    $1:\"LVORM\"::VARCHAR AS \"LVORM\",\n    $1:\"BWTTY\"::VARCHAR AS \"BWTTY\",\n    $1:\"XCHAR\"::VARCHAR AS \"XCHAR\",\n    $1:\"MMSTA\"::VARCHAR AS \"MMSTA\",\n    $1:\"MMSTD\"::VARCHAR AS \"MMSTD\",\n    $1:\"MAABC\"::VARCHAR AS \"MAABC\",\n    $1:\"KZKRI\"::VARCHAR AS \"KZKRI\",\n    $1:\"EKGRP\"::VARCHAR AS \"EKGRP\",\n    $1:\"AUSME\"::VARCHAR AS \"AUSME\",\n    $1:\"DISPR\"::VARCHAR AS \"DISPR\",\n    $1:\"DISMM\"::VARCHAR AS \"DISMM\",\n    $1:\"DISPO\"::VARCHAR AS \"DISPO\",\n    $1:\"KZDIE\"::VARCHAR AS \"KZDIE\",\n    $1:\"PLIFZ\"::VARCHAR AS \"PLIFZ\",\n    $1:\"WEBAZ\"::VARCHAR AS \"WEBAZ\",\n    $1:\"PERKZ\"::VARCHAR AS \"PERKZ\",\n    $1:\"AUSSS\"::VARCHAR AS \"AUSSS\",\n    $1:\"DISLS\"::VARCHAR AS \"DISLS\",\n    $1:\"BESKZ\"::VARCHAR AS \"BESKZ\",\n    $1:\"SOBSL\"::VARCHAR AS \"SOBSL\",\n    $1:\"SBDKZ\"::VARCHAR AS \"SBDKZ\",\n    $1:\"LAGPR\"::VARCHAR AS \"LAGPR\",\n    $1:\"ALTSL\"::VARCHAR AS \"ALTSL\",\n    $1:\"KZAUS\"::VARCHAR AS \"KZAUS\",\n    $1:\"AUSDT\"::VARCHAR AS \"AUSDT\",\n    $1:\"NFMAT\"::VARCHAR AS \"NFMAT\",\n    $1:\"KZBED\"::VARCHAR AS \"KZBED\",\n    $1:\"MISKZ\"::VARCHAR AS \"MISKZ\",\n    $1:\"FHORI\"::VARCHAR AS \"FHORI\",\n    $1:\"PFREI\"::VARCHAR AS \"PFREI\",\n    $1:\"FFREI\"::VARCHAR AS \"FFREI\",\n    $1:\"RGEKZ\"::VARCHAR AS \"RGEKZ\",\n    $1:\"FEVOR\"::VARCHAR AS \"FEVOR\",\n    $1:\"BEARZ\"::VARCHAR AS \"BEARZ\",\n    $1:\"RUEZT\"::VARCHAR AS \"RUEZT\",\n    $1:\"TRANZ\"::VARCHAR AS \"TRANZ\",\n    $1:\"DZEIT\"::VARCHAR AS \"DZEIT\",\n    $1:\"MAXLZ\"::VARCHAR AS \"MAXLZ\",\n    $1:\"LZEIH\"::VARCHAR AS \"LZEIH\",\n    $1:\"KZPRO\"::VARCHAR AS \"KZPRO\",\n    $1:\"GPMKZ\"::VARCHAR AS \"GPMKZ\",\n    $1:\"UEETO\"::VARCHAR AS \"UEETO\",\n    $1:\"UEETK\"::VARCHAR AS \"UEETK\",\n    $1:\"UNETO\"::VARCHAR AS \"UNETO\",\n    $1:\"WZEIT\"::VARCHAR AS \"WZEIT\",\n    $1:\"ATPKZ\"::VARCHAR AS \"ATPKZ\",\n    $1:\"VZUSL\"::VARCHAR AS \"VZUSL\",\n    $1:\"HERBL\"::VARCHAR AS \"HERBL\",\n    $1:\"INSMK\"::VARCHAR AS \"INSMK\",\n    $1:\"SPROZ\"::VARCHAR AS \"SPROZ\",\n    $1:\"QUAZT\"::VARCHAR AS \"QUAZT\",\n    $1:\"SSQSS\"::VARCHAR AS \"SSQSS\",\n    $1:\"MPDAU\"::VARCHAR AS \"MPDAU\",\n    $1:\"KZPPV\"::VARCHAR AS \"KZPPV\",\n    $1:\"KZDKZ\"::VARCHAR AS \"KZDKZ\",\n    $1:\"WSTGH\"::VARCHAR AS \"WSTGH\",\n    $1:\"PRFRQ\"::VARCHAR AS \"PRFRQ\",\n    $1:\"NKMPR\"::VARCHAR AS \"NKMPR\",\n    $1:\"LADGR\"::VARCHAR AS \"LADGR\",\n    $1:\"XCHPF\"::VARCHAR AS \"XCHPF\",\n    $1:\"USEQU\"::VARCHAR AS \"USEQU\",\n    $1:\"LGRAD\"::VARCHAR AS \"LGRAD\",\n    $1:\"AUFTL\"::VARCHAR AS \"AUFTL\",\n    $1:\"PLVAR\"::VARCHAR AS \"PLVAR\",\n    $1:\"OTYPE\"::VARCHAR AS \"OTYPE\",\n    $1:\"OBJID\"::VARCHAR AS \"OBJID\",\n    $1:\"MTVFP\"::VARCHAR AS \"MTVFP\",\n    $1:\"PERIV\"::VARCHAR AS \"PERIV\",\n    $1:\"KZKFK\"::VARCHAR AS \"KZKFK\",\n    $1:\"VRVEZ\"::VARCHAR AS \"VRVEZ\",\n    $1:\"VBEAZ\"::VARCHAR AS \"VBEAZ\",\n    $1:\"LIZYK\"::VARCHAR AS \"LIZYK\",\n    $1:\"BWSCL\"::VARCHAR AS \"BWSCL\",\n    $1:\"KAUTB\"::VARCHAR AS \"KAUTB\",\n    $1:\"KORDB\"::VARCHAR AS \"KORDB\",\n    $1:\"STAWN\"::VARCHAR AS \"STAWN\",\n    $1:\"HERKL\"::VARCHAR AS \"HERKL\",\n    $1:\"HERKR\"::VARCHAR AS \"HERKR\",\n    $1:\"EXPME\"::VARCHAR AS \"EXPME\",\n    $1:\"MTVER\"::VARCHAR AS \"MTVER\",\n    $1:\"PRCTR\"::VARCHAR AS \"PRCTR\",\n    $1:\"MRPPP\"::VARCHAR AS \"MRPPP\",\n    $1:\"SAUFT\"::VARCHAR AS \"SAUFT\",\n    $1:\"FXHOR\"::VARCHAR AS \"FXHOR\",\n    $1:\"VRMOD\"::VARCHAR AS \"VRMOD\",\n    $1:\"VINT1\"::VARCHAR AS \"VINT1\",\n    $1:\"VINT2\"::VARCHAR AS \"VINT2\",\n    $1:\"VERKZ\"::VARCHAR AS \"VERKZ\",\n    $1:\"STLAL\"::VARCHAR AS \"STLAL\",\n    $1:\"STLAN\"::VARCHAR AS \"STLAN\",\n    $1:\"PLNNR\"::VARCHAR AS \"PLNNR\",\n    $1:\"APLAL\"::VARCHAR AS \"APLAL\",\n    $1:\"SOBSK\"::VARCHAR AS \"SOBSK\",\n    $1:\"FRTME\"::VARCHAR AS \"FRTME\",\n    $1:\"LGPRO\"::VARCHAR AS \"LGPRO\",\n    $1:\"DISGR\"::VARCHAR AS \"DISGR\",\n    $1:\"KAUSF\"::VARCHAR AS \"KAUSF\",\n    $1:\"QZGTP\"::VARCHAR AS \"QZGTP\",\n    $1:\"QMATV\"::VARCHAR AS \"QMATV\",\n    $1:\"TAKZT\"::VARCHAR AS \"TAKZT\",\n    $1:\"RWPRO\"::VARCHAR AS \"RWPRO\",\n    $1:\"COPAM\"::VARCHAR AS \"COPAM\",\n    $1:\"ABCIN\"::VARCHAR AS \"ABCIN\",\n    $1:\"AWSLS\"::VARCHAR AS \"AWSLS\",\n    $1:\"SERNP\"::VARCHAR AS \"SERNP\",\n    $1:\"CUOBJ\"::VARCHAR AS \"CUOBJ\",\n    $1:\"STDPD\"::VARCHAR AS \"STDPD\",\n    $1:\"SFEPR\"::VARCHAR AS \"SFEPR\",\n    $1:\"XMCNG\"::VARCHAR AS \"XMCNG\",\n    $1:\"QSSYS\"::VARCHAR AS \"QSSYS\",\n    $1:\"LFRHY\"::VARCHAR AS \"LFRHY\",\n    $1:\"RDPRF\"::VARCHAR AS \"RDPRF\",\n    $1:\"VRBMT\"::VARCHAR AS \"VRBMT\",\n    $1:\"VRBWK\"::VARCHAR AS \"VRBWK\",\n    $1:\"VRBDT\"::VARCHAR AS \"VRBDT\",\n    $1:\"VRBFK\"::VARCHAR AS \"VRBFK\",\n    $1:\"AUTRU\"::VARCHAR AS \"AUTRU\",\n    $1:\"PREFE\"::VARCHAR AS \"PREFE\",\n    $1:\"PRENC\"::VARCHAR AS \"PRENC\",\n    $1:\"PRENO\"::VARCHAR AS \"PRENO\",\n    $1:\"PREND\"::VARCHAR AS \"PREND\",\n    $1:\"PRENE\"::VARCHAR AS \"PRENE\",\n    $1:\"PRENG\"::VARCHAR AS \"PRENG\",\n    $1:\"ITARK\"::VARCHAR AS \"ITARK\",\n    $1:\"SERVG\"::VARCHAR AS \"SERVG\",\n    $1:\"KZKUP\"::VARCHAR AS \"KZKUP\",\n    $1:\"STRGR\"::VARCHAR AS \"STRGR\",\n    $1:\"CUOBV\"::VARCHAR AS \"CUOBV\",\n    $1:\"LGFSB\"::VARCHAR AS \"LGFSB\",\n    $1:\"SCHGT\"::VARCHAR AS \"SCHGT\",\n    $1:\"CCFIX\"::VARCHAR AS \"CCFIX\",\n    $1:\"EPRIO\"::VARCHAR AS \"EPRIO\",\n    $1:\"QMATA\"::VARCHAR AS \"QMATA\",\n    $1:\"RESVP\"::VARCHAR AS \"RESVP\",\n    $1:\"PLNTY\"::VARCHAR AS \"PLNTY\",\n    $1:\"UOMGR\"::VARCHAR AS \"UOMGR\",\n    $1:\"UMRSL\"::VARCHAR AS \"UMRSL\",\n    $1:\"ABFAC\"::VARCHAR AS \"ABFAC\",\n    $1:\"SFCPF\"::VARCHAR AS \"SFCPF\",\n    $1:\"SHFLG\"::VARCHAR AS \"SHFLG\",\n    $1:\"SHZET\"::VARCHAR AS \"SHZET\",\n    $1:\"MDACH\"::VARCHAR AS \"MDACH\",\n    $1:\"KZECH\"::VARCHAR AS \"KZECH\",\n    $1:\"KOKRS\"::VARCHAR AS \"KOKRS\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0MAT_PLANT_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0MAT_PLANT_ATTR\n    (\n        \"MATNR\" VARCHAR,\n    \"WERKS\" VARCHAR,\n    \"PSTAT\" VARCHAR,\n    \"LVORM\" VARCHAR,\n    \"BWTTY\" VARCHAR,\n    \"XCHAR\" VARCHAR,\n    \"MMSTA\" VARCHAR,\n    \"MMSTD\" VARCHAR,\n    \"MAABC\" VARCHAR,\n    \"KZKRI\" VARCHAR,\n    \"EKGRP\" VARCHAR,\n    \"AUSME\" VARCHAR,\n    \"DISPR\" VARCHAR,\n    \"DISMM\" VARCHAR,\n    \"DISPO\" VARCHAR,\n    \"KZDIE\" VARCHAR,\n    \"PLIFZ\" VARCHAR,\n    \"WEBAZ\" VARCHAR,\n    \"PERKZ\" VARCHAR,\n    \"AUSSS\" VARCHAR,\n    \"DISLS\" VARCHAR,\n    \"BESKZ\" VARCHAR,\n    \"SOBSL\" VARCHAR,\n    \"SBDKZ\" VARCHAR,\n    \"LAGPR\" VARCHAR,\n    \"ALTSL\" VARCHAR,\n    \"KZAUS\" VARCHAR,\n    \"AUSDT\" VARCHAR,\n    \"NFMAT\" VARCHAR,\n    \"KZBED\" VARCHAR,\n    \"MISKZ\" VARCHAR,\n    \"FHORI\" VARCHAR,\n    \"PFREI\" VARCHAR,\n    \"FFREI\" VARCHAR,\n    \"RGEKZ\" VARCHAR,\n    \"FEVOR\" VARCHAR,\n    \"BEARZ\" VARCHAR,\n    \"RUEZT\" VARCHAR,\n    \"TRANZ\" VARCHAR,\n    \"DZEIT\" VARCHAR,\n    \"MAXLZ\" VARCHAR,\n    \"LZEIH\" VARCHAR,\n    \"KZPRO\" VARCHAR,\n    \"GPMKZ\" VARCHAR,\n    \"UEETO\" VARCHAR,\n    \"UEETK\" VARCHAR,\n    \"UNETO\" VARCHAR,\n    \"WZEIT\" VARCHAR,\n    \"ATPKZ\" VARCHAR,\n    \"VZUSL\" VARCHAR,\n    \"HERBL\" VARCHAR,\n    \"INSMK\" VARCHAR,\n    \"SPROZ\" VARCHAR,\n    \"QUAZT\" VARCHAR,\n    \"SSQSS\" VARCHAR,\n    \"MPDAU\" VARCHAR,\n    \"KZPPV\" VARCHAR,\n    \"KZDKZ\" VARCHAR,\n    \"WSTGH\" VARCHAR,\n    \"PRFRQ\" VARCHAR,\n    \"NKMPR\" VARCHAR,\n    \"LADGR\" VARCHAR,\n    \"XCHPF\" VARCHAR,\n    \"USEQU\" VARCHAR,\n    \"LGRAD\" VARCHAR,\n    \"AUFTL\" VARCHAR,\n    \"PLVAR\" VARCHAR,\n    \"OTYPE\" VARCHAR,\n    \"OBJID\" VARCHAR,\n    \"MTVFP\" VARCHAR,\n    \"PERIV\" VARCHAR,\n    \"KZKFK\" VARCHAR,\n    \"VRVEZ\" VARCHAR,\n    \"VBEAZ\" VARCHAR,\n    \"LIZYK\" VARCHAR,\n    \"BWSCL\" VARCHAR,\n    \"KAUTB\" VARCHAR,\n    \"KORDB\" VARCHAR,\n    \"STAWN\" VARCHAR,\n    \"HERKL\" VARCHAR,\n    \"HERKR\" VARCHAR,\n    \"EXPME\" VARCHAR,\n    \"MTVER\" VARCHAR,\n    \"PRCTR\" VARCHAR,\n    \"MRPPP\" VARCHAR,\n    \"SAUFT\" VARCHAR,\n    \"FXHOR\" VARCHAR,\n    \"VRMOD\" VARCHAR,\n    \"VINT1\" VARCHAR,\n    \"VINT2\" VARCHAR,\n    \"VERKZ\" VARCHAR,\n    \"STLAL\" VARCHAR,\n    \"STLAN\" VARCHAR,\n    \"PLNNR\" VARCHAR,\n    \"APLAL\" VARCHAR,\n    \"SOBSK\" VARCHAR,\n    \"FRTME\" VARCHAR,\n    \"LGPRO\" VARCHAR,\n    \"DISGR\" VARCHAR,\n    \"KAUSF\" VARCHAR,\n    \"QZGTP\" VARCHAR,\n    \"QMATV\" VARCHAR,\n    \"TAKZT\" VARCHAR,\n    \"RWPRO\" VARCHAR,\n    \"COPAM\" VARCHAR,\n    \"ABCIN\" VARCHAR,\n    \"AWSLS\" VARCHAR,\n    \"SERNP\" VARCHAR,\n    \"CUOBJ\" VARCHAR,\n    \"STDPD\" VARCHAR,\n    \"SFEPR\" VARCHAR,\n    \"XMCNG\" VARCHAR,\n    \"QSSYS\" VARCHAR,\n    \"LFRHY\" VARCHAR,\n    \"RDPRF\" VARCHAR,\n    \"VRBMT\" VARCHAR,\n    \"VRBWK\" VARCHAR,\n    \"VRBDT\" VARCHAR,\n    \"VRBFK\" VARCHAR,\n    \"AUTRU\" VARCHAR,\n    \"PREFE\" VARCHAR,\n    \"PRENC\" VARCHAR,\n    \"PRENO\" VARCHAR,\n    \"PREND\" VARCHAR,\n    \"PRENE\" VARCHAR,\n    \"PRENG\" VARCHAR,\n    \"ITARK\" VARCHAR,\n    \"SERVG\" VARCHAR,\n    \"KZKUP\" VARCHAR,\n    \"STRGR\" VARCHAR,\n    \"CUOBV\" VARCHAR,\n    \"LGFSB\" VARCHAR,\n    \"SCHGT\" VARCHAR,\n    \"CCFIX\" VARCHAR,\n    \"EPRIO\" VARCHAR,\n    \"QMATA\" VARCHAR,\n    \"RESVP\" VARCHAR,\n    \"PLNTY\" VARCHAR,\n    \"UOMGR\" VARCHAR,\n    \"UMRSL\" VARCHAR,\n    \"ABFAC\" VARCHAR,\n    \"SFCPF\" VARCHAR,\n    \"SHFLG\" VARCHAR,\n    \"SHZET\" VARCHAR,\n    \"MDACH\" VARCHAR,\n    \"KZECH\" VARCHAR,\n    \"KOKRS\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0MAT_PLANT_ATTR PRIMARY KEY (\"MATNR\", \"WERKS\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0MAT_PLANT_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"MATNR\", \"WERKS\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0MAT_PLANT_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"MATNR\" = S.\"MATNR\" AND T.\"WERKS\" = S.\"WERKS\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"MATNR\" = S.\"MATNR\",\n    T.\"WERKS\" = S.\"WERKS\",\n    T.\"PSTAT\" = S.\"PSTAT\",\n    T.\"LVORM\" = S.\"LVORM\",\n    T.\"BWTTY\" = S.\"BWTTY\",\n    T.\"XCHAR\" = S.\"XCHAR\",\n    T.\"MMSTA\" = S.\"MMSTA\",\n    T.\"MMSTD\" = S.\"MMSTD\",\n    T.\"MAABC\" = S.\"MAABC\",\n    T.\"KZKRI\" = S.\"KZKRI\",\n    T.\"EKGRP\" = S.\"EKGRP\",\n    T.\"AUSME\" = S.\"AUSME\",\n    T.\"DISPR\" = S.\"DISPR\",\n    T.\"DISMM\" = S.\"DISMM\",\n    T.\"DISPO\" = S.\"DISPO\",\n    T.\"KZDIE\" = S.\"KZDIE\",\n    T.\"PLIFZ\" = S.\"PLIFZ\",\n    T.\"WEBAZ\" = S.\"WEBAZ\",\n    T.\"PERKZ\" = S.\"PERKZ\",\n    T.\"AUSSS\" = S.\"AUSSS\",\n    T.\"DISLS\" = S.\"DISLS\",\n    T.\"BESKZ\" = S.\"BESKZ\",\n    T.\"SOBSL\" = S.\"SOBSL\",\n    T.\"SBDKZ\" = S.\"SBDKZ\",\n    T.\"LAGPR\" = S.\"LAGPR\",\n    T.\"ALTSL\" = S.\"ALTSL\",\n    T.\"KZAUS\" = S.\"KZAUS\",\n    T.\"AUSDT\" = S.\"AUSDT\",\n    T.\"NFMAT\" = S.\"NFMAT\",\n    T.\"KZBED\" = S.\"KZBED\",\n    T.\"MISKZ\" = S.\"MISKZ\",\n    T.\"FHORI\" = S.\"FHORI\",\n    T.\"PFREI\" = S.\"PFREI\",\n    T.\"FFREI\" = S.\"FFREI\",\n    T.\"RGEKZ\" = S.\"RGEKZ\",\n    T.\"FEVOR\" = S.\"FEVOR\",\n    T.\"BEARZ\" = S.\"BEARZ\",\n    T.\"RUEZT\" = S.\"RUEZT\",\n    T.\"TRANZ\" = S.\"TRANZ\",\n    T.\"DZEIT\" = S.\"DZEIT\",\n    T.\"MAXLZ\" = S.\"MAXLZ\",\n    T.\"LZEIH\" = S.\"LZEIH\",\n    T.\"KZPRO\" = S.\"KZPRO\",\n    T.\"GPMKZ\" = S.\"GPMKZ\",\n    T.\"UEETO\" = S.\"UEETO\",\n    T.\"UEETK\" = S.\"UEETK\",\n    T.\"UNETO\" = S.\"UNETO\",\n    T.\"WZEIT\" = S.\"WZEIT\",\n    T.\"ATPKZ\" = S.\"ATPKZ\",\n    T.\"VZUSL\" = S.\"VZUSL\",\n    T.\"HERBL\" = S.\"HERBL\",\n    T.\"INSMK\" = S.\"INSMK\",\n    T.\"SPROZ\" = S.\"SPROZ\",\n    T.\"QUAZT\" = S.\"QUAZT\",\n    T.\"SSQSS\" = S.\"SSQSS\",\n    T.\"MPDAU\" = S.\"MPDAU\",\n    T.\"KZPPV\" = S.\"KZPPV\",\n    T.\"KZDKZ\" = S.\"KZDKZ\",\n    T.\"WSTGH\" = S.\"WSTGH\",\n    T.\"PRFRQ\" = S.\"PRFRQ\",\n    T.\"NKMPR\" = S.\"NKMPR\",\n    T.\"LADGR\" = S.\"LADGR\",\n    T.\"XCHPF\" = S.\"XCHPF\",\n    T.\"USEQU\" = S.\"USEQU\",\n    T.\"LGRAD\" = S.\"LGRAD\",\n    T.\"AUFTL\" = S.\"AUFTL\",\n    T.\"PLVAR\" = S.\"PLVAR\",\n    T.\"OTYPE\" = S.\"OTYPE\",\n    T.\"OBJID\" = S.\"OBJID\",\n    T.\"MTVFP\" = S.\"MTVFP\",\n    T.\"PERIV\" = S.\"PERIV\",\n    T.\"KZKFK\" = S.\"KZKFK\",\n    T.\"VRVEZ\" = S.\"VRVEZ\",\n    T.\"VBEAZ\" = S.\"VBEAZ\",\n    T.\"LIZYK\" = S.\"LIZYK\",\n    T.\"BWSCL\" = S.\"BWSCL\",\n    T.\"KAUTB\" = S.\"KAUTB\",\n    T.\"KORDB\" = S.\"KORDB\",\n    T.\"STAWN\" = S.\"STAWN\",\n    T.\"HERKL\" = S.\"HERKL\",\n    T.\"HERKR\" = S.\"HERKR\",\n    T.\"EXPME\" = S.\"EXPME\",\n    T.\"MTVER\" = S.\"MTVER\",\n    T.\"PRCTR\" = S.\"PRCTR\",\n    T.\"MRPPP\" = S.\"MRPPP\",\n    T.\"SAUFT\" = S.\"SAUFT\",\n    T.\"FXHOR\" = S.\"FXHOR\",\n    T.\"VRMOD\" = S.\"VRMOD\",\n    T.\"VINT1\" = S.\"VINT1\",\n    T.\"VINT2\" = S.\"VINT2\",\n    T.\"VERKZ\" = S.\"VERKZ\",\n    T.\"STLAL\" = S.\"STLAL\",\n    T.\"STLAN\" = S.\"STLAN\",\n    T.\"PLNNR\" = S.\"PLNNR\",\n    T.\"APLAL\" = S.\"APLAL\",\n    T.\"SOBSK\" = S.\"SOBSK\",\n    T.\"FRTME\" = S.\"FRTME\",\n    T.\"LGPRO\" = S.\"LGPRO\",\n    T.\"DISGR\" = S.\"DISGR\",\n    T.\"KAUSF\" = S.\"KAUSF\",\n    T.\"QZGTP\" = S.\"QZGTP\",\n    T.\"QMATV\" = S.\"QMATV\",\n    T.\"TAKZT\" = S.\"TAKZT\",\n    T.\"RWPRO\" = S.\"RWPRO\",\n    T.\"COPAM\" = S.\"COPAM\",\n    T.\"ABCIN\" = S.\"ABCIN\",\n    T.\"AWSLS\" = S.\"AWSLS\",\n    T.\"SERNP\" = S.\"SERNP\",\n    T.\"CUOBJ\" = S.\"CUOBJ\",\n    T.\"STDPD\" = S.\"STDPD\",\n    T.\"SFEPR\" = S.\"SFEPR\",\n    T.\"XMCNG\" = S.\"XMCNG\",\n    T.\"QSSYS\" = S.\"QSSYS\",\n    T.\"LFRHY\" = S.\"LFRHY\",\n    T.\"RDPRF\" = S.\"RDPRF\",\n    T.\"VRBMT\" = S.\"VRBMT\",\n    T.\"VRBWK\" = S.\"VRBWK\",\n    T.\"VRBDT\" = S.\"VRBDT\",\n    T.\"VRBFK\" = S.\"VRBFK\",\n    T.\"AUTRU\" = S.\"AUTRU\",\n    T.\"PREFE\" = S.\"PREFE\",\n    T.\"PRENC\" = S.\"PRENC\",\n    T.\"PRENO\" = S.\"PRENO\",\n    T.\"PREND\" = S.\"PREND\",\n    T.\"PRENE\" = S.\"PRENE\",\n    T.\"PRENG\" = S.\"PRENG\",\n    T.\"ITARK\" = S.\"ITARK\",\n    T.\"SERVG\" = S.\"SERVG\",\n    T.\"KZKUP\" = S.\"KZKUP\",\n    T.\"STRGR\" = S.\"STRGR\",\n    T.\"CUOBV\" = S.\"CUOBV\",\n    T.\"LGFSB\" = S.\"LGFSB\",\n    T.\"SCHGT\" = S.\"SCHGT\",\n    T.\"CCFIX\" = S.\"CCFIX\",\n    T.\"EPRIO\" = S.\"EPRIO\",\n    T.\"QMATA\" = S.\"QMATA\",\n    T.\"RESVP\" = S.\"RESVP\",\n    T.\"PLNTY\" = S.\"PLNTY\",\n    T.\"UOMGR\" = S.\"UOMGR\",\n    T.\"UMRSL\" = S.\"UMRSL\",\n    T.\"ABFAC\" = S.\"ABFAC\",\n    T.\"SFCPF\" = S.\"SFCPF\",\n    T.\"SHFLG\" = S.\"SHFLG\",\n    T.\"SHZET\" = S.\"SHZET\",\n    T.\"MDACH\" = S.\"MDACH\",\n    T.\"KZECH\" = S.\"KZECH\",\n    T.\"KOKRS\" = S.\"KOKRS\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"MATNR\", \"WERKS\", \"PSTAT\", \"LVORM\", \"BWTTY\", \"XCHAR\", \"MMSTA\", \"MMSTD\", \"MAABC\", \"KZKRI\", \"EKGRP\", \"AUSME\", \"DISPR\", \"DISMM\", \"DISPO\", \"KZDIE\", \"PLIFZ\", \"WEBAZ\", \"PERKZ\", \"AUSSS\", \"DISLS\", \"BESKZ\", \"SOBSL\", \"SBDKZ\", \"LAGPR\", \"ALTSL\", \"KZAUS\", \"AUSDT\", \"NFMAT\", \"KZBED\", \"MISKZ\", \"FHORI\", \"PFREI\", \"FFREI\", \"RGEKZ\", \"FEVOR\", \"BEARZ\", \"RUEZT\", \"TRANZ\", \"DZEIT\", \"MAXLZ\", \"LZEIH\", \"KZPRO\", \"GPMKZ\", \"UEETO\", \"UEETK\", \"UNETO\", \"WZEIT\", \"ATPKZ\", \"VZUSL\", \"HERBL\", \"INSMK\", \"SPROZ\", \"QUAZT\", \"SSQSS\", \"MPDAU\", \"KZPPV\", \"KZDKZ\", \"WSTGH\", \"PRFRQ\", \"NKMPR\", \"LADGR\", \"XCHPF\", \"USEQU\", \"LGRAD\", \"AUFTL\", \"PLVAR\", \"OTYPE\", \"OBJID\", \"MTVFP\", \"PERIV\", \"KZKFK\", \"VRVEZ\", \"VBEAZ\", \"LIZYK\", \"BWSCL\", \"KAUTB\", \"KORDB\", \"STAWN\", \"HERKL\", \"HERKR\", \"EXPME\", \"MTVER\", \"PRCTR\", \"MRPPP\", \"SAUFT\", \"FXHOR\", \"VRMOD\", \"VINT1\", \"VINT2\", \"VERKZ\", \"STLAL\", \"STLAN\", \"PLNNR\", \"APLAL\", \"SOBSK\", \"FRTME\", \"LGPRO\", \"DISGR\", \"KAUSF\", \"QZGTP\", \"QMATV\", \"TAKZT\", \"RWPRO\", \"COPAM\", \"ABCIN\", \"AWSLS\", \"SERNP\", \"CUOBJ\", \"STDPD\", \"SFEPR\", \"XMCNG\", \"QSSYS\", \"LFRHY\", \"RDPRF\", \"VRBMT\", \"VRBWK\", \"VRBDT\", \"VRBFK\", \"AUTRU\", \"PREFE\", \"PRENC\", \"PRENO\", \"PREND\", \"PRENE\", \"PRENG\", \"ITARK\", \"SERVG\", \"KZKUP\", \"STRGR\", \"CUOBV\", \"LGFSB\", \"SCHGT\", \"CCFIX\", \"EPRIO\", \"QMATA\", \"RESVP\", \"PLNTY\", \"UOMGR\", \"UMRSL\", \"ABFAC\", \"SFCPF\", \"SHFLG\", \"SHZET\", \"MDACH\", \"KZECH\", \"KOKRS\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"MATNR\", S.\"WERKS\", S.\"PSTAT\", S.\"LVORM\", S.\"BWTTY\", S.\"XCHAR\", S.\"MMSTA\", S.\"MMSTD\", S.\"MAABC\", S.\"KZKRI\", S.\"EKGRP\", S.\"AUSME\", S.\"DISPR\", S.\"DISMM\", S.\"DISPO\", S.\"KZDIE\", S.\"PLIFZ\", S.\"WEBAZ\", S.\"PERKZ\", S.\"AUSSS\", S.\"DISLS\", S.\"BESKZ\", S.\"SOBSL\", S.\"SBDKZ\", S.\"LAGPR\", S.\"ALTSL\", S.\"KZAUS\", S.\"AUSDT\", S.\"NFMAT\", S.\"KZBED\", S.\"MISKZ\", S.\"FHORI\", S.\"PFREI\", S.\"FFREI\", S.\"RGEKZ\", S.\"FEVOR\", S.\"BEARZ\", S.\"RUEZT\", S.\"TRANZ\", S.\"DZEIT\", S.\"MAXLZ\", S.\"LZEIH\", S.\"KZPRO\", S.\"GPMKZ\", S.\"UEETO\", S.\"UEETK\", S.\"UNETO\", S.\"WZEIT\", S.\"ATPKZ\", S.\"VZUSL\", S.\"HERBL\", S.\"INSMK\", S.\"SPROZ\", S.\"QUAZT\", S.\"SSQSS\", S.\"MPDAU\", S.\"KZPPV\", S.\"KZDKZ\", S.\"WSTGH\", S.\"PRFRQ\", S.\"NKMPR\", S.\"LADGR\", S.\"XCHPF\", S.\"USEQU\", S.\"LGRAD\", S.\"AUFTL\", S.\"PLVAR\", S.\"OTYPE\", S.\"OBJID\", S.\"MTVFP\", S.\"PERIV\", S.\"KZKFK\", S.\"VRVEZ\", S.\"VBEAZ\", S.\"LIZYK\", S.\"BWSCL\", S.\"KAUTB\", S.\"KORDB\", S.\"STAWN\", S.\"HERKL\", S.\"HERKR\", S.\"EXPME\", S.\"MTVER\", S.\"PRCTR\", S.\"MRPPP\", S.\"SAUFT\", S.\"FXHOR\", S.\"VRMOD\", S.\"VINT1\", S.\"VINT2\", S.\"VERKZ\", S.\"STLAL\", S.\"STLAN\", S.\"PLNNR\", S.\"APLAL\", S.\"SOBSK\", S.\"FRTME\", S.\"LGPRO\", S.\"DISGR\", S.\"KAUSF\", S.\"QZGTP\", S.\"QMATV\", S.\"TAKZT\", S.\"RWPRO\", S.\"COPAM\", S.\"ABCIN\", S.\"AWSLS\", S.\"SERNP\", S.\"CUOBJ\", S.\"STDPD\", S.\"SFEPR\", S.\"XMCNG\", S.\"QSSYS\", S.\"LFRHY\", S.\"RDPRF\", S.\"VRBMT\", S.\"VRBWK\", S.\"VRBDT\", S.\"VRBFK\", S.\"AUTRU\", S.\"PREFE\", S.\"PRENC\", S.\"PRENO\", S.\"PREND\", S.\"PRENE\", S.\"PRENG\", S.\"ITARK\", S.\"SERVG\", S.\"KZKUP\", S.\"STRGR\", S.\"CUOBV\", S.\"LGFSB\", S.\"SCHGT\", S.\"CCFIX\", S.\"EPRIO\", S.\"QMATA\", S.\"RESVP\", S.\"PLNTY\", S.\"UOMGR\", S.\"UMRSL\", S.\"ABFAC\", S.\"SFCPF\", S.\"SHFLG\", S.\"SHZET\", S.\"MDACH\", S.\"KZECH\", S.\"KOKRS\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0MAT_PLANT_ATTR/0MAT_PLANT_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 213,
+      "source_instance": "SAPP07",
+      "entity_name": "0MAT_SALES_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "MATNR",
+        "VKORG",
+        "VTWEG"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MAT_SALES_ATTR_SRV_01/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MAT_SALES_ATTR_SRV_01/EntityOf0MAT_SALES_ATTR?$format=json",
+        "delta": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0MAT_SALES_ATTR_SRV_01/EntityOf0MAT_SALES_ATTR?$format=json&!deltatoken='D20260304105311_000022000'"
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0MAT_SALES_ATTR",
+        "parquet_filename": "0MAT_SALES_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0MAT_SALES_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0MAT_SALES_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0MAT_SALES_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0MAT_SALES_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0MAT_SALES_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0MAT_SALES_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0MAT_SALES_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0MAT_SALES_ATTR AS\n    SELECT\n        $1:\"MATNR\"::VARCHAR AS \"MATNR\",\n    $1:\"VKORG\"::VARCHAR AS \"VKORG\",\n    $1:\"VTWEG\"::VARCHAR AS \"VTWEG\",\n    $1:\"LVORM\"::VARCHAR AS \"LVORM\",\n    $1:\"VERSG\"::VARCHAR AS \"VERSG\",\n    $1:\"BONUS\"::VARCHAR AS \"BONUS\",\n    $1:\"PROVG\"::VARCHAR AS \"PROVG\",\n    $1:\"SKTOF\"::VARCHAR AS \"SKTOF\",\n    $1:\"VMSTA\"::VARCHAR AS \"VMSTA\",\n    $1:\"VMSTD\"::VARCHAR AS \"VMSTD\",\n    $1:\"SCHME\"::VARCHAR AS \"SCHME\",\n    $1:\"VRKME\"::VARCHAR AS \"VRKME\",\n    $1:\"MTPOS\"::VARCHAR AS \"MTPOS\",\n    $1:\"DWERK\"::VARCHAR AS \"DWERK\",\n    $1:\"PRODH\"::VARCHAR AS \"PRODH\",\n    $1:\"PMATN\"::VARCHAR AS \"PMATN\",\n    $1:\"KONDM\"::VARCHAR AS \"KONDM\",\n    $1:\"KTGRM\"::VARCHAR AS \"KTGRM\",\n    $1:\"MVGR1\"::VARCHAR AS \"MVGR1\",\n    $1:\"MVGR2\"::VARCHAR AS \"MVGR2\",\n    $1:\"MVGR3\"::VARCHAR AS \"MVGR3\",\n    $1:\"MVGR4\"::VARCHAR AS \"MVGR4\",\n    $1:\"MVGR5\"::VARCHAR AS \"MVGR5\",\n    $1:\"SSTUF\"::VARCHAR AS \"SSTUF\",\n    $1:\"PFLKS\"::VARCHAR AS \"PFLKS\",\n    $1:\"LSTFL\"::VARCHAR AS \"LSTFL\",\n    $1:\"LSTVZ\"::VARCHAR AS \"LSTVZ\",\n    $1:\"LSTAK\"::VARCHAR AS \"LSTAK\",\n    $1:\"LDVFL\"::VARCHAR AS \"LDVFL\",\n    $1:\"LDBFL\"::VARCHAR AS \"LDBFL\",\n    $1:\"LDVZL\"::VARCHAR AS \"LDVZL\",\n    $1:\"LDBZL\"::VARCHAR AS \"LDBZL\",\n    $1:\"VDVFL\"::VARCHAR AS \"VDVFL\",\n    $1:\"VDBFL\"::VARCHAR AS \"VDBFL\",\n    $1:\"VDVZL\"::VARCHAR AS \"VDVZL\",\n    $1:\"VDBZL\"::VARCHAR AS \"VDBZL\",\n    $1:\"PRAT1\"::VARCHAR AS \"PRAT1\",\n    $1:\"PRAT2\"::VARCHAR AS \"PRAT2\",\n    $1:\"PRAT3\"::VARCHAR AS \"PRAT3\",\n    $1:\"PRAT4\"::VARCHAR AS \"PRAT4\",\n    $1:\"PRAT5\"::VARCHAR AS \"PRAT5\",\n    $1:\"PRAT6\"::VARCHAR AS \"PRAT6\",\n    $1:\"PRAT7\"::VARCHAR AS \"PRAT7\",\n    $1:\"PRAT8\"::VARCHAR AS \"PRAT8\",\n    $1:\"PRAT9\"::VARCHAR AS \"PRAT9\",\n    $1:\"PRATA\"::VARCHAR AS \"PRATA\",\n    $1:\"RDPRF\"::VARCHAR AS \"RDPRF\",\n    $1:\"MEGRU\"::VARCHAR AS \"MEGRU\",\n    $1:\"RJART\"::VARCHAR AS \"RJART\",\n    $1:\"PBIND\"::VARCHAR AS \"PBIND\",\n    $1:\"VAVME\"::VARCHAR AS \"VAVME\",\n    $1:\"MATKC\"::VARCHAR AS \"MATKC\",\n    $1:\"PVMSO\"::VARCHAR AS \"PVMSO\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0MAT_SALES_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0MAT_SALES_ATTR\n    (\n        \"MATNR\" VARCHAR,\n    \"VKORG\" VARCHAR,\n    \"VTWEG\" VARCHAR,\n    \"LVORM\" VARCHAR,\n    \"VERSG\" VARCHAR,\n    \"BONUS\" VARCHAR,\n    \"PROVG\" VARCHAR,\n    \"SKTOF\" VARCHAR,\n    \"VMSTA\" VARCHAR,\n    \"VMSTD\" VARCHAR,\n    \"SCHME\" VARCHAR,\n    \"VRKME\" VARCHAR,\n    \"MTPOS\" VARCHAR,\n    \"DWERK\" VARCHAR,\n    \"PRODH\" VARCHAR,\n    \"PMATN\" VARCHAR,\n    \"KONDM\" VARCHAR,\n    \"KTGRM\" VARCHAR,\n    \"MVGR1\" VARCHAR,\n    \"MVGR2\" VARCHAR,\n    \"MVGR3\" VARCHAR,\n    \"MVGR4\" VARCHAR,\n    \"MVGR5\" VARCHAR,\n    \"SSTUF\" VARCHAR,\n    \"PFLKS\" VARCHAR,\n    \"LSTFL\" VARCHAR,\n    \"LSTVZ\" VARCHAR,\n    \"LSTAK\" VARCHAR,\n    \"LDVFL\" VARCHAR,\n    \"LDBFL\" VARCHAR,\n    \"LDVZL\" VARCHAR,\n    \"LDBZL\" VARCHAR,\n    \"VDVFL\" VARCHAR,\n    \"VDBFL\" VARCHAR,\n    \"VDVZL\" VARCHAR,\n    \"VDBZL\" VARCHAR,\n    \"PRAT1\" VARCHAR,\n    \"PRAT2\" VARCHAR,\n    \"PRAT3\" VARCHAR,\n    \"PRAT4\" VARCHAR,\n    \"PRAT5\" VARCHAR,\n    \"PRAT6\" VARCHAR,\n    \"PRAT7\" VARCHAR,\n    \"PRAT8\" VARCHAR,\n    \"PRAT9\" VARCHAR,\n    \"PRATA\" VARCHAR,\n    \"RDPRF\" VARCHAR,\n    \"MEGRU\" VARCHAR,\n    \"RJART\" VARCHAR,\n    \"PBIND\" VARCHAR,\n    \"VAVME\" VARCHAR,\n    \"MATKC\" VARCHAR,\n    \"PVMSO\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0MAT_SALES_ATTR PRIMARY KEY (\"MATNR\", \"VKORG\", \"VTWEG\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0MAT_SALES_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"MATNR\", \"VKORG\", \"VTWEG\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0MAT_SALES_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"MATNR\" = S.\"MATNR\" AND T.\"VKORG\" = S.\"VKORG\" AND T.\"VTWEG\" = S.\"VTWEG\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"MATNR\" = S.\"MATNR\",\n    T.\"VKORG\" = S.\"VKORG\",\n    T.\"VTWEG\" = S.\"VTWEG\",\n    T.\"LVORM\" = S.\"LVORM\",\n    T.\"VERSG\" = S.\"VERSG\",\n    T.\"BONUS\" = S.\"BONUS\",\n    T.\"PROVG\" = S.\"PROVG\",\n    T.\"SKTOF\" = S.\"SKTOF\",\n    T.\"VMSTA\" = S.\"VMSTA\",\n    T.\"VMSTD\" = S.\"VMSTD\",\n    T.\"SCHME\" = S.\"SCHME\",\n    T.\"VRKME\" = S.\"VRKME\",\n    T.\"MTPOS\" = S.\"MTPOS\",\n    T.\"DWERK\" = S.\"DWERK\",\n    T.\"PRODH\" = S.\"PRODH\",\n    T.\"PMATN\" = S.\"PMATN\",\n    T.\"KONDM\" = S.\"KONDM\",\n    T.\"KTGRM\" = S.\"KTGRM\",\n    T.\"MVGR1\" = S.\"MVGR1\",\n    T.\"MVGR2\" = S.\"MVGR2\",\n    T.\"MVGR3\" = S.\"MVGR3\",\n    T.\"MVGR4\" = S.\"MVGR4\",\n    T.\"MVGR5\" = S.\"MVGR5\",\n    T.\"SSTUF\" = S.\"SSTUF\",\n    T.\"PFLKS\" = S.\"PFLKS\",\n    T.\"LSTFL\" = S.\"LSTFL\",\n    T.\"LSTVZ\" = S.\"LSTVZ\",\n    T.\"LSTAK\" = S.\"LSTAK\",\n    T.\"LDVFL\" = S.\"LDVFL\",\n    T.\"LDBFL\" = S.\"LDBFL\",\n    T.\"LDVZL\" = S.\"LDVZL\",\n    T.\"LDBZL\" = S.\"LDBZL\",\n    T.\"VDVFL\" = S.\"VDVFL\",\n    T.\"VDBFL\" = S.\"VDBFL\",\n    T.\"VDVZL\" = S.\"VDVZL\",\n    T.\"VDBZL\" = S.\"VDBZL\",\n    T.\"PRAT1\" = S.\"PRAT1\",\n    T.\"PRAT2\" = S.\"PRAT2\",\n    T.\"PRAT3\" = S.\"PRAT3\",\n    T.\"PRAT4\" = S.\"PRAT4\",\n    T.\"PRAT5\" = S.\"PRAT5\",\n    T.\"PRAT6\" = S.\"PRAT6\",\n    T.\"PRAT7\" = S.\"PRAT7\",\n    T.\"PRAT8\" = S.\"PRAT8\",\n    T.\"PRAT9\" = S.\"PRAT9\",\n    T.\"PRATA\" = S.\"PRATA\",\n    T.\"RDPRF\" = S.\"RDPRF\",\n    T.\"MEGRU\" = S.\"MEGRU\",\n    T.\"RJART\" = S.\"RJART\",\n    T.\"PBIND\" = S.\"PBIND\",\n    T.\"VAVME\" = S.\"VAVME\",\n    T.\"MATKC\" = S.\"MATKC\",\n    T.\"PVMSO\" = S.\"PVMSO\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"MATNR\", \"VKORG\", \"VTWEG\", \"LVORM\", \"VERSG\", \"BONUS\", \"PROVG\", \"SKTOF\", \"VMSTA\", \"VMSTD\", \"SCHME\", \"VRKME\", \"MTPOS\", \"DWERK\", \"PRODH\", \"PMATN\", \"KONDM\", \"KTGRM\", \"MVGR1\", \"MVGR2\", \"MVGR3\", \"MVGR4\", \"MVGR5\", \"SSTUF\", \"PFLKS\", \"LSTFL\", \"LSTVZ\", \"LSTAK\", \"LDVFL\", \"LDBFL\", \"LDVZL\", \"LDBZL\", \"VDVFL\", \"VDBFL\", \"VDVZL\", \"VDBZL\", \"PRAT1\", \"PRAT2\", \"PRAT3\", \"PRAT4\", \"PRAT5\", \"PRAT6\", \"PRAT7\", \"PRAT8\", \"PRAT9\", \"PRATA\", \"RDPRF\", \"MEGRU\", \"RJART\", \"PBIND\", \"VAVME\", \"MATKC\", \"PVMSO\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"MATNR\", S.\"VKORG\", S.\"VTWEG\", S.\"LVORM\", S.\"VERSG\", S.\"BONUS\", S.\"PROVG\", S.\"SKTOF\", S.\"VMSTA\", S.\"VMSTD\", S.\"SCHME\", S.\"VRKME\", S.\"MTPOS\", S.\"DWERK\", S.\"PRODH\", S.\"PMATN\", S.\"KONDM\", S.\"KTGRM\", S.\"MVGR1\", S.\"MVGR2\", S.\"MVGR3\", S.\"MVGR4\", S.\"MVGR5\", S.\"SSTUF\", S.\"PFLKS\", S.\"LSTFL\", S.\"LSTVZ\", S.\"LSTAK\", S.\"LDVFL\", S.\"LDBFL\", S.\"LDVZL\", S.\"LDBZL\", S.\"VDVFL\", S.\"VDBFL\", S.\"VDVZL\", S.\"VDBZL\", S.\"PRAT1\", S.\"PRAT2\", S.\"PRAT3\", S.\"PRAT4\", S.\"PRAT5\", S.\"PRAT6\", S.\"PRAT7\", S.\"PRAT8\", S.\"PRAT9\", S.\"PRATA\", S.\"RDPRF\", S.\"MEGRU\", S.\"RJART\", S.\"PBIND\", S.\"VAVME\", S.\"MATKC\", S.\"PVMSO\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0MAT_SALES_ATTR/0MAT_SALES_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 214,
+      "source_instance": "SAPP07",
+      "entity_name": "0SALESORG_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "VKORG"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0SALESORG_ATTR_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0SALESORG_ATTR_SRV/EntityOf0SALESORG_ATTR?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0SALESORG_ATTR",
+        "parquet_filename": "0SALESORG_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0SALESORG_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0SALESORG_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0SALESORG_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0SALESORG_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0SALESORG_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0SALESORG_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0SALESORG_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0SALESORG_ATTR AS\n    SELECT\n        $1:\"VKORG\"::VARCHAR AS \"VKORG\",\n    $1:\"WAERS_V\"::VARCHAR AS \"WAERS_V\",\n    $1:\"BUKRS\"::VARCHAR AS \"BUKRS\",\n    $1:\"KUNNR\"::VARCHAR AS \"KUNNR\",\n    $1:\"LAND1\"::VARCHAR AS \"LAND1\",\n    $1:\"WAERS\"::VARCHAR AS \"WAERS\",\n    $1:\"PERIV\"::VARCHAR AS \"PERIV\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0SALESORG_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0SALESORG_ATTR\n    (\n        \"VKORG\" VARCHAR,\n    \"WAERS_V\" VARCHAR,\n    \"BUKRS\" VARCHAR,\n    \"KUNNR\" VARCHAR,\n    \"LAND1\" VARCHAR,\n    \"WAERS\" VARCHAR,\n    \"PERIV\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0SALESORG_ATTR PRIMARY KEY (\"VKORG\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0SALESORG_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"VKORG\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0SALESORG_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"VKORG\" = S.\"VKORG\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"VKORG\" = S.\"VKORG\",\n    T.\"WAERS_V\" = S.\"WAERS_V\",\n    T.\"BUKRS\" = S.\"BUKRS\",\n    T.\"KUNNR\" = S.\"KUNNR\",\n    T.\"LAND1\" = S.\"LAND1\",\n    T.\"WAERS\" = S.\"WAERS\",\n    T.\"PERIV\" = S.\"PERIV\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"VKORG\", \"WAERS_V\", \"BUKRS\", \"KUNNR\", \"LAND1\", \"WAERS\", \"PERIV\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"VKORG\", S.\"WAERS_V\", S.\"BUKRS\", S.\"KUNNR\", S.\"LAND1\", S.\"WAERS\", S.\"PERIV\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0SALESORG_ATTR/0SALESORG_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 204,
+      "source_instance": "SAPP07",
+      "entity_name": "0COSTCENTER_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "KOKRS",
+        "KOSTL",
+        "DATEFROM"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0COSTCENTER_ATTR_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0COSTCENTER_ATTR_SRV/EntityOf0COSTCENTER_ATTR?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0COSTCENTER_ATTR",
+        "parquet_filename": "0COSTCENTER_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0COSTCENTER_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0COSTCENTER_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0COSTCENTER_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0COSTCENTER_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0COSTCENTER_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0COSTCENTER_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0COSTCENTER_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0COSTCENTER_ATTR AS\n    SELECT\n        $1:\"KOKRS\"::VARCHAR AS \"KOKRS\",\n    $1:\"KOSTL\"::VARCHAR AS \"KOSTL\",\n    $1:\"DATETO\"::VARCHAR AS \"DATETO\",\n    $1:\"DATEFROM\"::VARCHAR AS \"DATEFROM\",\n    $1:\"VERAK\"::VARCHAR AS \"VERAK\",\n    $1:\"BUKRS\"::VARCHAR AS \"BUKRS\",\n    $1:\"GSBER\"::VARCHAR AS \"GSBER\",\n    $1:\"KOSAR\"::VARCHAR AS \"KOSAR\",\n    $1:\"WAERS\"::VARCHAR AS \"WAERS\",\n    $1:\"PRCTR\"::VARCHAR AS \"PRCTR\",\n    $1:\"ABTEI\"::VARCHAR AS \"ABTEI\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0COSTCENTER_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0COSTCENTER_ATTR\n    (\n        \"KOKRS\" VARCHAR,\n    \"KOSTL\" VARCHAR,\n    \"DATETO\" VARCHAR,\n    \"DATEFROM\" VARCHAR,\n    \"VERAK\" VARCHAR,\n    \"BUKRS\" VARCHAR,\n    \"GSBER\" VARCHAR,\n    \"KOSAR\" VARCHAR,\n    \"WAERS\" VARCHAR,\n    \"PRCTR\" VARCHAR,\n    \"ABTEI\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0COSTCENTER_ATTR PRIMARY KEY (\"KOKRS\", \"KOSTL\", \"DATEFROM\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0COSTCENTER_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"KOKRS\", \"KOSTL\", \"DATEFROM\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0COSTCENTER_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"KOKRS\" = S.\"KOKRS\" AND T.\"KOSTL\" = S.\"KOSTL\" AND T.\"DATEFROM\" = S.\"DATEFROM\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"KOKRS\" = S.\"KOKRS\",\n    T.\"KOSTL\" = S.\"KOSTL\",\n    T.\"DATETO\" = S.\"DATETO\",\n    T.\"DATEFROM\" = S.\"DATEFROM\",\n    T.\"VERAK\" = S.\"VERAK\",\n    T.\"BUKRS\" = S.\"BUKRS\",\n    T.\"GSBER\" = S.\"GSBER\",\n    T.\"KOSAR\" = S.\"KOSAR\",\n    T.\"WAERS\" = S.\"WAERS\",\n    T.\"PRCTR\" = S.\"PRCTR\",\n    T.\"ABTEI\" = S.\"ABTEI\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"KOKRS\", \"KOSTL\", \"DATETO\", \"DATEFROM\", \"VERAK\", \"BUKRS\", \"GSBER\", \"KOSAR\", \"WAERS\", \"PRCTR\", \"ABTEI\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"KOKRS\", S.\"KOSTL\", S.\"DATETO\", S.\"DATEFROM\", S.\"VERAK\", S.\"BUKRS\", S.\"GSBER\", S.\"KOSAR\", S.\"WAERS\", S.\"PRCTR\", S.\"ABTEI\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0COSTCENTER_ATTR/0COSTCENTER_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 215,
+      "source_instance": "SAPP07",
+      "entity_name": "0DISTR_CHAN_TEXT",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "SPRAS",
+        "VTWEG"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0DISTR_CHAN_TEXT_SRV_01/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0DISTR_CHAN_TEXT_SRV_01/EntityOf0DISTR_CHAN_TEXT?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0DISTR_CHAN_TEXT",
+        "parquet_filename": "0DISTR_CHAN_TEXT_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0DISTR_CHAN_TEXT",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0DISTR_CHAN_TEXT",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0DISTR_CHAN_TEXT"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0DISTR_CHAN_TEXT_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0DISTR_CHAN_TEXT_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0DISTR_CHAN_TEXT'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0DISTR_CHAN_TEXT_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0DISTR_CHAN_TEXT AS\n    SELECT\n        $1:\"SPRAS\"::VARCHAR AS \"SPRAS\",\n    $1:\"VTWEG\"::VARCHAR AS \"VTWEG\",\n    $1:\"VTEXT\"::VARCHAR AS \"VTEXT\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0DISTR_CHAN_TEXT_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0DISTR_CHAN_TEXT\n    (\n        \"SPRAS\" VARCHAR,\n    \"VTWEG\" VARCHAR,\n    \"VTEXT\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0DISTR_CHAN_TEXT PRIMARY KEY (\"SPRAS\", \"VTWEG\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0DISTR_CHAN_TEXT T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"SPRAS\", \"VTWEG\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0DISTR_CHAN_TEXT V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"SPRAS\" = S.\"SPRAS\" AND T.\"VTWEG\" = S.\"VTWEG\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"SPRAS\" = S.\"SPRAS\",\n    T.\"VTWEG\" = S.\"VTWEG\",\n    T.\"VTEXT\" = S.\"VTEXT\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"SPRAS\", \"VTWEG\", \"VTEXT\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"SPRAS\", S.\"VTWEG\", S.\"VTEXT\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0DISTR_CHAN_TEXT/0DISTR_CHAN_TEXT_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 216,
+      "source_instance": "SAPP07",
+      "entity_name": "0DIVISION_TEXT",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "SPRAS",
+        "SPART"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0DIVISION_TEXT_SRV_01/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0DIVISION_TEXT_SRV_01/EntityOf0DIVISION_TEXT?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0DIVISION_TEXT",
+        "parquet_filename": "0DIVISION_TEXT_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0DIVISION_TEXT",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0DIVISION_TEXT",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0DIVISION_TEXT"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0DIVISION_TEXT_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0DIVISION_TEXT_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0DIVISION_TEXT'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0DIVISION_TEXT_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0DIVISION_TEXT AS\n    SELECT\n        $1:\"SPRAS\"::VARCHAR AS \"SPRAS\",\n    $1:\"SPART\"::VARCHAR AS \"SPART\",\n    $1:\"VTEXT\"::VARCHAR AS \"VTEXT\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0DIVISION_TEXT_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0DIVISION_TEXT\n    (\n        \"SPRAS\" VARCHAR,\n    \"SPART\" VARCHAR,\n    \"VTEXT\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0DIVISION_TEXT PRIMARY KEY (\"SPRAS\", \"SPART\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0DIVISION_TEXT T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"SPRAS\", \"SPART\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0DIVISION_TEXT V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"SPRAS\" = S.\"SPRAS\" AND T.\"SPART\" = S.\"SPART\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"SPRAS\" = S.\"SPRAS\",\n    T.\"SPART\" = S.\"SPART\",\n    T.\"VTEXT\" = S.\"VTEXT\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"SPRAS\", \"SPART\", \"VTEXT\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"SPRAS\", S.\"SPART\", S.\"VTEXT\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0DIVISION_TEXT/0DIVISION_TEXT_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 205,
+      "source_instance": "SAPP07",
+      "entity_name": "0PROFIT_CTR_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "KOKRS",
+        "PRCTR",
+        "DATEFROM"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0PROFIT_CTR_ATTR_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0PROFIT_CTR_ATTR_SRV/EntityOf0PROFIT_CTR_ATTR?$format=json",
+        "delta": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0PROFIT_CTR_ATTR_SRV/EntityOf0PROFIT_CTR_ATTR?$format=json&!deltatoken='D20260304100630_000023000'"
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0PROFIT_CTR_ATTR",
+        "parquet_filename": "0PROFIT_CTR_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0PROFIT_CTR_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0PROFIT_CTR_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0PROFIT_CTR_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0PROFIT_CTR_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0PROFIT_CTR_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0PROFIT_CTR_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0PROFIT_CTR_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0PROFIT_CTR_ATTR AS\n    SELECT\n        $1:\"KOKRS\"::VARCHAR AS \"KOKRS\",\n    $1:\"PRCTR\"::VARCHAR AS \"PRCTR\",\n    $1:\"DATETO\"::VARCHAR AS \"DATETO\",\n    $1:\"DATEFROM\"::VARCHAR AS \"DATEFROM\",\n    $1:\"VERAK\"::VARCHAR AS \"VERAK\",\n    $1:\"WAERS\"::VARCHAR AS \"WAERS\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0PROFIT_CTR_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0PROFIT_CTR_ATTR\n    (\n        \"KOKRS\" VARCHAR,\n    \"PRCTR\" VARCHAR,\n    \"DATETO\" VARCHAR,\n    \"DATEFROM\" VARCHAR,\n    \"VERAK\" VARCHAR,\n    \"WAERS\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0PROFIT_CTR_ATTR PRIMARY KEY (\"KOKRS\", \"PRCTR\", \"DATEFROM\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0PROFIT_CTR_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"KOKRS\", \"PRCTR\", \"DATEFROM\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0PROFIT_CTR_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"KOKRS\" = S.\"KOKRS\" AND T.\"PRCTR\" = S.\"PRCTR\" AND T.\"DATEFROM\" = S.\"DATEFROM\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"KOKRS\" = S.\"KOKRS\",\n    T.\"PRCTR\" = S.\"PRCTR\",\n    T.\"DATETO\" = S.\"DATETO\",\n    T.\"DATEFROM\" = S.\"DATEFROM\",\n    T.\"VERAK\" = S.\"VERAK\",\n    T.\"WAERS\" = S.\"WAERS\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"KOKRS\", \"PRCTR\", \"DATETO\", \"DATEFROM\", \"VERAK\", \"WAERS\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"KOKRS\", S.\"PRCTR\", S.\"DATETO\", S.\"DATEFROM\", S.\"VERAK\", S.\"WAERS\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0PROFIT_CTR_ATTR/0PROFIT_CTR_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 217,
+      "source_instance": "SAPP07",
+      "entity_name": "0SALES_OFF_TEXT",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "SPRAS",
+        "VKBUR"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0SALES_OFF_TEXT_SRV_01/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0SALES_OFF_TEXT_SRV_01/EntityOf0SALES_OFF_TEXT?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0SALES_OFF_TEXT",
+        "parquet_filename": "0SALES_OFF_TEXT_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0SALES_OFF_TEXT",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0SALES_OFF_TEXT",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0SALES_OFF_TEXT"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0SALES_OFF_TEXT_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0SALES_OFF_TEXT_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0SALES_OFF_TEXT'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0SALES_OFF_TEXT_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0SALES_OFF_TEXT AS\n    SELECT\n        $1:\"SPRAS\"::VARCHAR AS \"SPRAS\",\n    $1:\"VKBUR\"::VARCHAR AS \"VKBUR\",\n    $1:\"BEZEI\"::VARCHAR AS \"BEZEI\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0SALES_OFF_TEXT_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0SALES_OFF_TEXT\n    (\n        \"SPRAS\" VARCHAR,\n    \"VKBUR\" VARCHAR,\n    \"BEZEI\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0SALES_OFF_TEXT PRIMARY KEY (\"SPRAS\", \"VKBUR\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0SALES_OFF_TEXT T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"SPRAS\", \"VKBUR\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0SALES_OFF_TEXT V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"SPRAS\" = S.\"SPRAS\" AND T.\"VKBUR\" = S.\"VKBUR\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"SPRAS\" = S.\"SPRAS\",\n    T.\"VKBUR\" = S.\"VKBUR\",\n    T.\"BEZEI\" = S.\"BEZEI\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"SPRAS\", \"VKBUR\", \"BEZEI\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"SPRAS\", S.\"VKBUR\", S.\"BEZEI\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0SALES_OFF_TEXT/0SALES_OFF_TEXT_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 218,
+      "source_instance": "SAPP07",
+      "entity_name": "0COMP_CODE_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "BUKRS"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_OCOMP_CODE_ATTR_SRV_01/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_OCOMP_CODE_ATTR_SRV_01/EntityOf0COMP_CODE_ATTR?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0COMP_CODE_ATTR",
+        "parquet_filename": "0COMP_CODE_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0COMP_CODE_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0COMP_CODE_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0COMP_CODE_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0COMP_CODE_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0COMP_CODE_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0COMP_CODE_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0COMP_CODE_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0COMP_CODE_ATTR AS\n    SELECT\n        $1:\"BUKRS\"::VARCHAR AS \"BUKRS\",\n    $1:\"LAND1\"::VARCHAR AS \"LAND1\",\n    $1:\"WAERS\"::VARCHAR AS \"WAERS\",\n    $1:\"KTOPL\"::VARCHAR AS \"KTOPL\",\n    $1:\"KKBER\"::VARCHAR AS \"KKBER\",\n    $1:\"PERIV\"::VARCHAR AS \"PERIV\",\n    $1:\"RCOMP\"::VARCHAR AS \"RCOMP\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0COMP_CODE_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0COMP_CODE_ATTR\n    (\n        \"BUKRS\" VARCHAR,\n    \"LAND1\" VARCHAR,\n    \"WAERS\" VARCHAR,\n    \"KTOPL\" VARCHAR,\n    \"KKBER\" VARCHAR,\n    \"PERIV\" VARCHAR,\n    \"RCOMP\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0COMP_CODE_ATTR PRIMARY KEY (\"BUKRS\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0COMP_CODE_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"BUKRS\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0COMP_CODE_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"BUKRS\" = S.\"BUKRS\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"BUKRS\" = S.\"BUKRS\",\n    T.\"LAND1\" = S.\"LAND1\",\n    T.\"WAERS\" = S.\"WAERS\",\n    T.\"KTOPL\" = S.\"KTOPL\",\n    T.\"KKBER\" = S.\"KKBER\",\n    T.\"PERIV\" = S.\"PERIV\",\n    T.\"RCOMP\" = S.\"RCOMP\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"BUKRS\", \"LAND1\", \"WAERS\", \"KTOPL\", \"KKBER\", \"PERIV\", \"RCOMP\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"BUKRS\", S.\"LAND1\", S.\"WAERS\", S.\"KTOPL\", S.\"KKBER\", S.\"PERIV\", S.\"RCOMP\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0COMP_CODE_ATTR/0COMP_CODE_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 219,
+      "source_instance": "SAPP07",
+      "entity_name": "0CHRT_ACCTS_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "KTOPL"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0CHRT_ACCTS_ATTR_SRV_01/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0CHRT_ACCTS_ATTR_SRV_01/EntityOf0CHRT_ACCTS_ATTR?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0CHRT_ACCTS_ATTR",
+        "parquet_filename": "0CHRT_ACCTS_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0CHRT_ACCTS_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0CHRT_ACCTS_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0CHRT_ACCTS_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0CHRT_ACCTS_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0CHRT_ACCTS_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0CHRT_ACCTS_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0CHRT_ACCTS_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0CHRT_ACCTS_ATTR AS\n    SELECT\n        $1:\"KTOPL\"::VARCHAR AS \"KTOPL\",\n    $1:\"KKTPL\"::VARCHAR AS \"KKTPL\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0CHRT_ACCTS_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0CHRT_ACCTS_ATTR\n    (\n        \"KTOPL\" VARCHAR,\n    \"KKTPL\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0CHRT_ACCTS_ATTR PRIMARY KEY (\"KTOPL\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0CHRT_ACCTS_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"KTOPL\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0CHRT_ACCTS_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"KTOPL\" = S.\"KTOPL\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"KTOPL\" = S.\"KTOPL\",\n    T.\"KKTPL\" = S.\"KKTPL\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"KTOPL\", \"KKTPL\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"KTOPL\", S.\"KKTPL\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0CHRT_ACCTS_ATTR/0CHRT_ACCTS_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  },
+  {
+    "entity": {
+      "entity_id": 220,
+      "source_instance": "SAPP07",
+      "entity_name": "0SALESORG_ATTR",
+      "status_id": 1,
+      "running_status": 0,
+      "last_run_id": "b815ad0e-98ad-4736-96ae-0959e86bc23a",
+      "last_error_message": null,
+      "source_type": "sap",
+      "pool_id": 1,
+      "order_id": 1,
+      "delta_enabled": 1,
+      "business_keys": [
+        "VKORG"
+      ],
+      "force_snowflake": false
+    },
+    "source": {
+      "credential": "SAPP07",
+      "response_format": "odata_sap",
+      "urls": {
+        "metadata": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0SALESORG_ATTR_SRV/$metadata",
+        "init": "http://vhgatc08ci.sap.global.gg.group:8000/sap/opu/odata/sap/ZBC_0SALESORG_ATTR_SRV/EntityOf0SALESORG_ATTR?$format=json",
+        "delta": null
+      },
+      "paging": {
+        "next_page_attribute": "_next",
+        "next_page_instruction": null
+      },
+      "delta": {
+        "delta_attribute": "_delta",
+        "delta_instruction": null
+      },
+      "selection": null
+    },
+    "bronze": {
+      "landing": {
+        "storage_type": "azure_blob",
+        "connection": "AB_Data",
+        "container": "raw",
+        "directory": "SAPP07/0SALESORG_ATTR",
+        "parquet_filename": "0SALESORG_ATTR_{audit_id}.parquet"
+      },
+      "enrichment": {
+        "add_audit_id": true,
+        "add_entity_id": true,
+        "add_extracted_at_utc": true
+      },
+      "logs": {
+        "connection": "AB_Logs",
+        "container": "logs",
+        "directory": "SAPP07",
+        "task_config_filename": "Execution_Tasks_{audit_id}_{guid}.json",
+        "execution_log_filename": "run_{audit_id}_{guid}.jsonl"
+      },
+      "archive": {
+        "enabled": true,
+        "connection": "AB_Archive",
+        "container": "archive",
+        "directory": "SAPP07/0SALESORG_ATTR",
+        "overwrite": true,
+        "delete_source_blob_after_archive": false
+      }
+    },
+    "snowflake": {
+      "connection": "snowflake",
+      "destination": {
+        "stage_database": null,
+        "stage_schema": null,
+        "stage_name": null,
+        "file_format_database": null,
+        "file_format_schema": null,
+        "file_format_name": null,
+        "landing_database": "SAP_LANDING",
+        "landing_schema": "P07",
+        "landing_view_name": "VW_0SALESORG_ATTR",
+        "replica_database": "SAP",
+        "replica_schema": "P07",
+        "replica_table_name": "T_0SALESORG_ATTR"
+      },
+      "scripts": {
+        "lock_task_start": null,
+        "unlock_task_success": null,
+        "unlock_task_error": null,
+        "landing_view_create": "CREATE FILE FORMAT IF NOT EXISTS SAP_LANDING.P07.VW_0SALESORG_ATTR_PARQUET_FMT\n    TYPE = PARQUET\n    COMPRESSION = AUTO;\n\nCREATE STAGE IF NOT EXISTS SAP_LANDING.P07.VW_0SALESORG_ATTR_STG\n    URL = 'azure://awebidatarep01.blob.core.windows.net/raw/SAPP07/0SALESORG_ATTR'\n    CREDENTIALS = (AZURE_SAS_TOKEN = 'sp=racwdl&st=2026-02-10T08:41:08Z&se=2027-02-10T16:56:08Z&spr=https&sv=2024-11-04&sr=c&sig=FLyGug%2B35OYWhWqSbTBZjYwMsUA33nxLRKmYG%2BMKZpE%3D')\n    FILE_FORMAT = SAP_LANDING.P07.VW_0SALESORG_ATTR_PARQUET_FMT;\n\nCREATE OR REPLACE VIEW SAP_LANDING.P07.VW_0SALESORG_ATTR AS\n    SELECT\n        $1:\"VKORG\"::VARCHAR AS \"VKORG\",\n    $1:\"WAERS_V\"::VARCHAR AS \"WAERS_V\",\n    $1:\"BUKRS\"::VARCHAR AS \"BUKRS\",\n    $1:\"KUNNR\"::VARCHAR AS \"KUNNR\",\n    $1:\"LAND1\"::VARCHAR AS \"LAND1\",\n    $1:\"WAERS\"::VARCHAR AS \"WAERS\",\n    $1:\"PERIV\"::VARCHAR AS \"PERIV\",\n    $1:\"ODQ_CHANGEMODE\"::VARCHAR AS \"ODQ_CHANGEMODE\",\n    $1:\"ODQ_ENTITYCNTR\"::VARCHAR AS \"ODQ_ENTITYCNTR\",\n    $1:\"AUDIT_ID\"::VARCHAR AS \"AUDIT_ID\"\n    FROM @SAP_LANDING.P07.VW_0SALESORG_ATTR_STG;",
+        "replica_table_create": "CREATE TABLE IF NOT EXISTS SAP.P07.T_0SALESORG_ATTR\n    (\n        \"VKORG\" VARCHAR,\n    \"WAERS_V\" VARCHAR,\n    \"BUKRS\" VARCHAR,\n    \"KUNNR\" VARCHAR,\n    \"LAND1\" VARCHAR,\n    \"WAERS\" VARCHAR,\n    \"PERIV\" VARCHAR,\n    \"ODQ_CHANGEMODE\" VARCHAR,\n    \"ODQ_ENTITYCNTR\" VARCHAR,\n    \"AUDIT_ID\" VARCHAR,\n    CONSTRAINT PK_T_0SALESORG_ATTR PRIMARY KEY (\"VKORG\")\n    );",
+        "merge_apply": "MERGE INTO SAP.P07.T_0SALESORG_ATTR T\n    USING (\n      SELECT * FROM (\n        SELECT\n          V.*,\n          ROW_NUMBER() OVER (\n            PARTITION BY \"VKORG\"\n            ORDER BY \"AUDIT_ID\" DESC, \"ODQ_ENTITYCNTR\" DESC\n          ) AS _RN\n        FROM SAP_LANDING.P07.VW_0SALESORG_ATTR V\n      )\n      WHERE _RN = 1\n    ) S\n    ON T.\"VKORG\" = S.\"VKORG\"\n    \nWHEN MATCHED AND S.\"ODQ_CHANGEMODE\" = 'D' THEN DELETE\n\n    WHEN MATCHED THEN UPDATE SET\n        T.\"VKORG\" = S.\"VKORG\",\n    T.\"WAERS_V\" = S.\"WAERS_V\",\n    T.\"BUKRS\" = S.\"BUKRS\",\n    T.\"KUNNR\" = S.\"KUNNR\",\n    T.\"LAND1\" = S.\"LAND1\",\n    T.\"WAERS\" = S.\"WAERS\",\n    T.\"PERIV\" = S.\"PERIV\",\n    T.\"ODQ_CHANGEMODE\" = S.\"ODQ_CHANGEMODE\",\n    T.\"ODQ_ENTITYCNTR\" = S.\"ODQ_ENTITYCNTR\",\n    T.\"AUDIT_ID\" = S.\"AUDIT_ID\"\n\n    WHEN NOT MATCHED AND (S.\"ODQ_CHANGEMODE\" IS NULL OR S.\"ODQ_CHANGEMODE\" <> 'D') THEN INSERT\n    (\"VKORG\", \"WAERS_V\", \"BUKRS\", \"KUNNR\", \"LAND1\", \"WAERS\", \"PERIV\", \"ODQ_CHANGEMODE\", \"ODQ_ENTITYCNTR\", \"AUDIT_ID\")\n    VALUES\n    (S.\"VKORG\", S.\"WAERS_V\", S.\"BUKRS\", S.\"KUNNR\", S.\"LAND1\", S.\"WAERS\", S.\"PERIV\", S.\"ODQ_CHANGEMODE\", S.\"ODQ_ENTITYCNTR\", S.\"AUDIT_ID\");",
+        "promote_status_5_to_4": null
+      }
+    },
+    "parquet_path": "out/SAPP07/0SALESORG_ATTR/0SALESORG_ATTR_{audit_id}.parquet",
+    "delete_local_file": false,
+    "local_archive_path": null
+  }
+]

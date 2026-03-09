@@ -1,0 +1,671 @@
+{
+  "tasks": [
+    {
+      "entity": {
+        "entity_id": 2001,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "LOCATIONS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 1,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/57d8d72c-ec3e-4f31-aabf-a094000bd1ee/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/LOCATIONS/LOCATIONS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2002,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "CUSTOMERS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 2,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/748d9897-c741-4914-9835-fbb7650fee17/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/CUSTOMERS/CUSTOMERS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2003,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "AI_DAMAGED_PARTS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 3,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/33052569-3c06-409c-ba92-827654bd933c/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/AI_DAMAGED_PARTS/AI_DAMAGED_PARTS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2004,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "ACTUAL_AI_AND_FS_COMPLAINTS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 4,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/0d0fbc2a-d61d-4e62-80d4-be65b00e1ea2/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/ACTUAL_AI_AND_FS_COMPLAINTS/ACTUAL_AI_AND_FS_COMPLAINTS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2005,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "EA_ACTIONS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 5,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/8c673708-ddb3-4928-849f-715c4e4226ea/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/EA_ACTIONS/EA_ACTIONS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2006,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "EXTERNAL_AUDITS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 6,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/0ddc2ea9-dcba-4cf6-9790-61f1b1b2a383/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/EXTERNAL_AUDITS/EXTERNAL_AUDITS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2007,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "FINDINGS_IN_INSPECTIONS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 7,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/62db176b-beaa-43ba-8ce7-1ca47f0ca00d/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/FINDINGS_IN_INSPECTIONS/FINDINGS_IN_INSPECTIONS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2008,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "FS_AUDIT_GOVERANCE_COMPARISSON_1",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 8,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/e7158e13-236a-4f59-a649-40f25029e438/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/FS_AUDIT_GOVERANCE_COMPARISSON_1/FS_AUDIT_GOVERANCE_COMPARISSON_1_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2009,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "FS_AUDIT_GOVERANCE_COMPARISSON_2",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 9,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/0ddc2ea9-dcba-4cf6-9790-61f1b1b2a383/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/FS_AUDIT_GOVERANCE_COMPARISSON_2/FS_AUDIT_GOVERANCE_COMPARISSON_2_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2010,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "INC_ACTIONS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 10,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/be1f7804-0354-4379-a229-30c9594edda2/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/INC_ACTIONS/INC_ACTIONS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2011,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "INCIDENT_ROOT_CAUSES",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 11,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/151e736c-de4d-4faa-b60a-208067b7141d/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/INCIDENT_ROOT_CAUSES/INCIDENT_ROOT_CAUSES_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2012,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "INCIDENTS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 12,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/0d0fbc2a-d61d-4e62-80d4-be65b00e1ea2/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/INCIDENTS/INCIDENTS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2013,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "INCIDENTS_RISK",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 13,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/1d89d64c-24a6-4e5b-b2e7-04d9932ce760/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/INCIDENTS_RISK/INCIDENTS_RISK_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2014,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "INSP_ACTIONS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 14,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/057f8bba-6c10-488e-867f-c80ce23389f3/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/INSP_ACTIONS/INSP_ACTIONS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2015,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "INSPECTION",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 15,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/e7158e13-236a-4f59-a649-40f25029e438/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/INSPECTION/INSPECTION_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2016,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "INSPECTIONS_-_QUESTIONS_AND_ANSWERS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 16,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/1704de0c-68b1-4905-a916-e7d341c602d2/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/INSPECTIONS_-_QUESTIONS_AND_ANSWERS/INSPECTIONS_-_QUESTIONS_AND_ANSWERS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2017,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "OPERATIONS_COMPLIANCE_TARGETS_INDICATOR",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 17,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/1704de0c-68b1-4905-a916-e7d341c602d2/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/OPERATIONS_COMPLIANCE_TARGETS_INDICATOR/OPERATIONS_COMPLIANCE_TARGETS_INDICATOR_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2018,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "OPERATIONS_COMPLIANCE_TARGETS_PERIOD",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 18,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/1704de0c-68b1-4905-a916-e7d341c602d3/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/OPERATIONS_COMPLIANCE_TARGETS_PERIOD/OPERATIONS_COMPLIANCE_TARGETS_PERIOD_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2019,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "OPERATIONS_COMPLIANCE_TARGETS_REGION",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 19,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/1704de0c-68b1-4905-a916-e7d341c602d4/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/OPERATIONS_COMPLIANCE_TARGETS_REGION/OPERATIONS_COMPLIANCE_TARGETS_REGION_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2020,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "OPERATIONS_COMPLIANCE_TARGETS_TARGET",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 20,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/1704de0c-68b1-4905-a916-e7d341c602d5/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/OPERATIONS_COMPLIANCE_TARGETS_TARGET/OPERATIONS_COMPLIANCE_TARGETS_TARGET_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2021,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "PI_-_BODY_PART_AND_INJURIES",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 21,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/46da407e-e7e1-4db8-89c7-17677218478e/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/PI_-_BODY_PART_AND_INJURIES/PI_-_BODY_PART_AND_INJURIES_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2022,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "PI_-_IMMEDIATE_ACTIONS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 22,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/b811d691-a442-468b-ad7b-d6a2f393074c/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/PI_-_IMMEDIATE_ACTIONS/PI_-_IMMEDIATE_ACTIONS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2023,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "PI_-_LTI_HOURS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 23,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/ec5bfd86-e5a9-47f5-b453-ad167d23c698/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/PI_-_LTI_HOURS/PI_-_LTI_HOURS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2024,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "VI_-_INCIDENT_VEHICLE_TYPE",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 24,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/5fa95d61-0312-44b6-84cd-97be655f480c/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/VI_-_INCIDENT_VEHICLE_TYPE/VI_-_INCIDENT_VEHICLE_TYPE_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2025,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "LAB_RESULTS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 25,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/4bd72d7d-d5a2-42a7-8c0f-7480f9708fad/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/LAB_RESULTS/LAB_RESULTS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2026,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "LAB_RESULTS_CATEGORIES",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 26,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/db8ac486-a39c-4634-b518-d419ed6d9c12/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/LAB_RESULTS_CATEGORIES/LAB_RESULTS_CATEGORIES_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2027,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "FS_AUDIT_GOVERMNANCE_-_HA_CCP_AUDIT",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 27,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/e7158e13-236a-4f59-a649-40f25029e438/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/FS_AUDIT_GOVERMNANCE_-_HA_CCP_AUDIT/FS_AUDIT_GOVERMNANCE_-_HA_CCP_AUDIT_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2028,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "SPI_UNITS",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 28,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/b3eb9b93-f748-41b2-92d1-9765bc70d45f/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/SPI_UNITS/SPI_UNITS_{audit_id}.parquet"
+    },
+    {
+      "entity": {
+        "entity_id": 2029,
+        "source_instance": "INTELEX_EU",
+        "entity_name": "SPI_DATA",
+        "status_id": 1,
+        "running_status": 0,
+        "source_type": "rest_api",
+        "pool_id": 1,
+        "order_id": 29,
+        "delta_enabled": 1,
+        "force_snowflake": false
+      },
+      "source": {
+        "credential": "Intelex",
+        "response_format": "atom_xml_v3",
+        "urls": {
+          "init": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/ee2a00ae-7b74-4231-a23e-df4bc4af7f36/Data"
+        },
+        "selection": null
+      },
+      "parquet_path": "out/INTELEX_EU/SPI_DATA/SPI_DATA_{audit_id}.parquet"
+    }
+  ]
+}

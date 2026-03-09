@@ -1,0 +1,11 @@
+[
+    {
+    "task_id": "INTELEX-INCIDENTS",
+    "source_type": "rest_api",
+    "response_format": "atom_xml_v3",
+    "credential": "Intelex",
+    "url": "https://eu.intelex.com/Login/GateGroupExternal/api/odata/Forms/DataDefinition/0d0fbc2a-d61d-4e62-80d4-be65b00e1ea2/Data",
+    "parquet_path": "out/intelex/incidents.parquet",
+    "azure": { "enabled": false, "container": "raw", "blob_prefix": "intelex/incidents" }
+  }
+]
